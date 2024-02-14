@@ -18,7 +18,7 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "HTTPS=true SSL_CRT_FILE=/etc/nginx/ssl/client.crt SSL_KEY_FILE=/etc/nginx/ssl/client.key react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
