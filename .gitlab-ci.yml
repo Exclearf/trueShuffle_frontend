@@ -13,6 +13,9 @@ variables:
 Test Repository:
   image: node:21-alpine3.18
   stage: test-repo
+  before_script:
+    - npm cache clean --force
+    - npm ci
   tags:
     - docker
   script:
@@ -25,9 +28,6 @@ Build:
   stage: build
   tags:
     - docker
-  before_script:
-    - npm cache clean --force
-    - npm ci
   script:
     - npm run build
   only:
