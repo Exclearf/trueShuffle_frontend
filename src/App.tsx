@@ -12,7 +12,7 @@ const App = () => {
   ] = useAuth();
 
   return (
-    <>
+    <main>
       <Routes>
         <Route
           path="/"
@@ -26,7 +26,7 @@ const App = () => {
           }
         />
       </Routes>
-    </>
+    </main>
   );
 };
 
