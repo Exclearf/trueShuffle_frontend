@@ -1,26 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { Route, Routes, Navigate } from "react-router-dom";
+import Index from "./Pages/Index";
+import LogIn from "./Pages/LogIn";
+import { useAuth } from "./hooks/useAuth";
 
-function App() {
+const App = () => {
+  const [
+    getSession,
+    createSession,
+    endSession,
+    extendSession,
+    createCookie,
+    deleteCookie,
+  ] = useAuth();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Routes>
+        <Route
+          path="/"
+          //@ts-ignore
+          element={getSession() ? <Index logOut={deleteCookie}/> : <Navigate to="/login" />}
+        />
+        <Route
+          path="login"
+          element={
+            getSession() ? <Navigate to="/" /> : <LogIn logIn={createCookie} />
+          }
+        />
+      </Routes>
+    </>
   );
-}
+};
 
 export default App;
