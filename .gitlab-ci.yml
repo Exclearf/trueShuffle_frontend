@@ -28,6 +28,9 @@ Build:
   stage: build
   tags:
     - docker
+  before_script:
+    - npm cache clean --force
+    - npm ci
   script:
     - npm run build
   only:
