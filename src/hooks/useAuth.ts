@@ -1,40 +1,67 @@
+import axios from "axios";
 import Cookies from "js-cookie";
 
 export const useAuth = () => {
   /**
    * Function which checks whether the user has an unexpired cookie
    *
-   * @returns {string | undefined} Undefined if the Cookie does not exist
+   * @returns {string | undefined} Undefined if no accessToken exists
    */
-  const getSession = (): string | undefined => {
-    console.log(Cookies.get("trueShuffleUserID"));
-    return Cookies.get("trueShuffleUserID");
+  const getSession = () => {
+    return {
+      accessToken: Cookies.get("trueShuffleUser/accessToken"),
+      refreshToken: Cookies.get("trueShuffleUser/refreshToken"),
+      expiresIn: Cookies.get("trueShuffleUser/expiresIn"),
+    };
   };
 
   /**
    * Function which sends an authorization request to the server.
    * If the User ID is unknown, the respective error is thrown.
    *
-   * @param isExtended Whether to create an extended session (keep userId cookie for longer)
-   * @param userId Uniquely generated ID String for user
+   * @param code Code obtained via
    *
    * @returns {boolean} True if user has been successfully signed in
    */
-  const createSession = (isExtended: boolean, userId: string): boolean => {
+  const createSession = async (code: string) => {
     try {
-    } catch (e: any) {
+      console.log("createSession!1");
+      const response = await axios.post("https://backend-trueshuffle.encape.me/login", {
+        code,
+      });
+      console.log("createSession!2");
+      let expiresIn: any = (response.data.expiresIn - 60) * 1000;
+      console.log("createSession!3");
+      const authData = {
+        accessToken: Cookies.set(
+          response.data.accessToken,
+          "trueShuffleUser/accessToken",
+          {
+            expires: expiresIn,
+          }
+        ),
+        refreshToken: Cookies.set(
+          response.data.refreshToken,
+          "trueShuffleUser/refreshToken",
+          {
+            expires: expiresIn,
+          }
+        ),
+        expiresIn: Cookies.set(
+          response.data.expiresIn,
+          "trueShuffleUser/expiresIn",
+          {
+            expires: expiresIn,
+          }
+        ),
+      };
+      console.log("createSession!4");
+      return authData;
+    } catch (e) {
+      window.location.href = "/";
       console.error(
-        `There has been a problem while creating a session\nStack trace: ${e}}`
+        `There has been a problem while deleting a session\nStack trace: ${e}}`
       );
-      throw e;
-    }
-    //Some logic
-    let isSucceded = true;
-
-    if (isSucceded) {
-      Cookies.set(`trueShuffleUserID`, userId, { expires: 1 });
-      return true;
-    } else {
       return false;
     }
   };
@@ -47,19 +74,21 @@ export const useAuth = () => {
    */
   const endSession = (): boolean => {
     try {
-      // Make a call to the Back End to end a session
+      //! Make a call to the Back End to end a session
       let isSucceded = true;
       if (isSucceded) {
-        Cookies.remove(`trueShuffleUserID`);
+        Cookies.remove("trueShuffleUser/accessToken");
+        Cookies.remove("trueShuffleUser/refreshToken");
+        Cookies.remove("trueShuffleUser/expiresIn");
         return true;
       } else {
         return false;
       }
-    } catch (e: any) {
+    } catch (e) {
       console.error(
         `There has been a problem while deleting a session\nStack trace: ${e}}`
       );
-      throw e;
+      return false;
     }
   };
 
@@ -70,27 +99,50 @@ export const useAuth = () => {
    * @returns {boolean} True if it prolonged the current session.
    */
   const extendSession = () => {
-    if (getSession() !== undefined) {
-      Cookies.set("trueShuffleUserID", getSession() as any, { expires: 1 });
-      return true;
-    } else {
+    try {
+      if (!getSession().refreshToken || !getSession().expiresIn) {
+        const timeout = setTimeout(async () => {
+          const response = await axios.post("https://backend-trueshuffle.encape.me/refresh", {
+            refreshToken: getSession().refreshToken,
+          });
+          Cookies.set(
+            response.data.refreshToken,
+            "trueShuffleUser/refreshToken",
+            { expires: response.data.accessToken }
+          );
+
+          Cookies.set(response.data.expiresIn, "trueShuffleUser/expiresIn", {
+            expires: response.data.expiresIn,
+          });
+
+          return true;
+        }, ((getSession().expiresIn as any) - 60) * 1000);
+      } else {
+        return false;
+      }
+    } catch (e) {
+      window.location.href = "/";
+      console.error(
+        `There has been a problem while deleting a session\nStack trace: ${e}}`
+      );
       return false;
     }
   };
 
-  const createCookie = () => {
-    Cookies.set("trueShuffleUserID", "1", { expires: 1 });
-  };
-  const deleteCookie = () => {
-    Cookies.remove("trueShuffleUserID");
+  /**
+   * Function that checks whether there is a saved session in the cookies.
+   *
+   * @returns {boolean} True if there is an accessToken saved
+   */
+  const isActiveSession = () => {
+    return getSession().accessToken !== undefined;
   };
 
   return [
     getSession,
     createSession,
+    isActiveSession,
     endSession,
     extendSession,
-    createCookie,
-    deleteCookie,
   ] as const;
 };

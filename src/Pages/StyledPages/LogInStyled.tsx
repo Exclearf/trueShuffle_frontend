@@ -10,7 +10,8 @@ const LogInWrapper = styled.div`
   .logIn-btn {
     background-color: none;
     transition: filter 250ms ease-in-out; /* Add this line */
-    transition: transform 250ms ease-in-out; /* Add this line */
+    transition: transform
+     250ms ease-in-out; /* Add this line */
 
 
     filter: drop-shadow(0 0 0px #1e5128) drop-shadow(0 0 -1px #1e5128)
