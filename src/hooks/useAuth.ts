@@ -28,34 +28,34 @@ export const useAuth = () => {
    *
    * @returns {boolean} True if user has been successfully signed in
    */
-  const createSession = (code: string) => {
-    // eslint-disable-next-line
-    const response = axios
-      .post("https://backend-trueshuffle.encape.me/login", {
-        code,
-      })
-      .then((response) => {
-        console.log("createSession!2 INSIDE RESPONSE");
-        Cookies.set("trueShuffleUser/accessToken", response.data.accessToken, {
-          expires: response.data.expiresIn,
-        });
-        Cookies.set(
-          "trueShuffleUser/refreshToken",
-          response.data.refreshToken,
-          {
-            expires: response.data.expiresIn,
-          }
-        );
-        Cookies.set("trueShuffleUser/expiresIn", response.data.expiresIn, {
-          expires: response.data.expiresIn,
-        });
-        //@ts-ignore
-        window.history.pushState({}, null, "/");
-        setIsLogged(true);
-      })
-      .catch(() => {
-        window.location = "/" as any;
+  const createSession = async (code: string) => {
+    try {
+      const response = await axios.post(
+        "https://backend-trueshuffle.encape.me/login",
+        {
+          code,
+        }
+      );
+
+      if (response.status != 200) {
+        return;
+      }
+
+      Cookies.set("trueShuffleUser/accessToken", response.data.accessToken, {
+        expires: response.data.expiresIn,
       });
+      Cookies.set("trueShuffleUser/refreshToken", response.data.refreshToken, {
+        expires: response.data.expiresIn,
+      });
+      Cookies.set("trueShuffleUser/expiresIn", response.data.expiresIn, {
+        expires: response.data.expiresIn,
+      });
+      //@ts-ignore
+      window.history.pushState({}, null, "/");
+      setIsLogged(true);
+    } catch {
+      () => (window.location = "/" as any);
+    }
   };
 
   /**
@@ -95,6 +95,9 @@ export const useAuth = () => {
               refreshToken: getSession().refreshToken,
             }
           );
+          if (response.status != 208) {
+            return;
+          }
           Cookies.set(
             "trueShuffleUser/refreshToken",
             response.data.refreshToken,
