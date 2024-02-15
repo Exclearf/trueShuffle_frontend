@@ -43,9 +43,9 @@ export const useAuth = () => {
         return;
       }
 
-      setCookie("trueShuffleUser/accessToken", response.data.accessToken);
-      setCookie("trueShuffleUser/refreshToken", response.data.refreshToken);
-      setCookie("trueShuffleUser/expiresIn", response.data.expiresIn);
+      setCookie("accessToken", response.data.accessToken);
+      setCookie("refreshToken", response.data.refreshToken);
+      setCookie("expiresIn", response.data.expiresIn);
       //@ts-ignore
       window.history.pushState({}, null, "/");
       setIsLogged(true);
@@ -62,9 +62,9 @@ export const useAuth = () => {
    */
   const endSession = (): boolean => {
     try {
-      removeCookie("trueShuffleUser/accessToken");
-      removeCookie("trueShuffleUser/refreshToken");
-      removeCookie("trueShuffleUser/expiresIn");
+      removeCookie("accessToken", { path: "/", domain: "encape.me" });
+      removeCookie("refreshToken", { path: "/", domain: "encape.me" });
+      removeCookie("expiresIn", { path: "/", domain: "encape.me" });
       setIsLogged(false);
       return true;
     } catch (e) {
