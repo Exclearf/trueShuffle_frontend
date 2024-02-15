@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 
 //@ts-ignore
-const Index = ({ code, exitHandler }) => {
+const Index = ({ exitHandler }) => {
   return (
     <div>
       <header>
@@ -15,16 +15,8 @@ const Index = ({ code, exitHandler }) => {
           </ul>
         </nav>
       </main>
-      <Outlet />
     </div>
   );
 };
 
 export default Index;
-
-// if(isAuthenticated() === true){
-//     display page name
-// }
-// else{
-//     rerroute
-// }
