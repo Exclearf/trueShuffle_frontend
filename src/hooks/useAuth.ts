@@ -50,7 +50,11 @@ export const useAuth = () => {
           });
           //@ts-ignore
           window.history.pushState({}, null, "/");
-          console.log("createSession!2 INSIDE RESPONSE END");
+          console.log("---------END OF FUNC--------")
+          console.log(`response.data.accessToken ${response.data.accessToken}`)
+          console.log(`response.data.refreshToken ${response.data.refreshToken}`)
+          console.log(`response.data.expiresIn ${response.data.expiresIn}`)
+          console.log("----------------------------")
         })
         .catch(() => {
           window.location = "/" as any;
