@@ -41,15 +41,9 @@ export const useAuth = () => {
         return;
       }
 
-      Cookies.set("trueShuffleUser/accessToken", response.data.accessToken, {
-        expires: response.data.expiresIn,
-      });
-      Cookies.set("trueShuffleUser/refreshToken", response.data.refreshToken, {
-        expires: response.data.expiresIn,
-      });
-      Cookies.set("trueShuffleUser/expiresIn", response.data.expiresIn, {
-        expires: response.data.expiresIn,
-      });
+      Cookies.set("trueShuffleUser/accessToken", response.data.accessToken);
+      Cookies.set("trueShuffleUser/refreshToken", response.data.refreshToken);
+      Cookies.set("trueShuffleUser/expiresIn", response.data.expiresIn);
       //@ts-ignore
       window.history.pushState({}, null, "/");
       setIsLogged(true);
@@ -66,18 +60,9 @@ export const useAuth = () => {
    */
   const endSession = (): boolean => {
     try {
-      Cookies.remove("trueShuffleUser/accessToken", {
-        path: "/",
-        domain: ".encape.me",
-      });
-      Cookies.remove("trueShuffleUser/refreshToken", {
-        path: "/",
-        domain: ".encape.me",
-      });
-      Cookies.remove("trueShuffleUser/expiresIn", {
-        path: "/",
-        domain: ".encape.me",
-      });
+      Cookies.remove("trueShuffleUser/accessToken");
+      Cookies.remove("trueShuffleUser/refreshToken");
+      Cookies.remove("trueShuffleUser/expiresIn");
       setIsLogged(false);
       return true;
     } catch (e) {
