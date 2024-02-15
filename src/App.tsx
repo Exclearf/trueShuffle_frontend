@@ -3,14 +3,13 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import Index from "./Pages/Index";
 import LogIn from "./Pages/LogIn";
 import { useAuth } from "./hooks/useAuth";
-import { useEffect } from "react";
-
-const code = new URLSearchParams(window.location.search).get("code");
+import { useEffect, useState } from "react";
 
 const App = () => {
+  const [code, setCode] = useState(new URLSearchParams(window.location.search).get("code"))
   const [getSession, createSession, isActiveSession] = useAuth();
-
-  useEffect(() => {
+//@ts-ignore
+   useEffect(() => {
     if (!code) return;
     createSession(code);
     console.log("SESSION: " + code);
@@ -23,7 +22,8 @@ const App = () => {
           path="/"
           element={
             isActiveSession() ? (
-              <Index code={getSession().accessToken} />
+              //@ts-ignore
+              <Index code={getSession().accessToken} setCode={setCode} />
             ) : (
               <Navigate to="/login" />
             )
