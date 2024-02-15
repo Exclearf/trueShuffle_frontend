@@ -1,5 +1,3 @@
-import { Outlet } from "react-router-dom";
-
 //@ts-ignore
 const Index = ({ exitHandler }) => {
   return (
