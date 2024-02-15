@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 
 //@ts-ignore
-const Index = ({ code }) => {
+const Index = ({ code, exitHandler }) => {
   return (
     <div>
       <header>
@@ -11,15 +11,7 @@ const Index = ({ code }) => {
         <p>Main page</p>
         <nav>
           <ul>
-            <button
-              onClick={() => {
-                window.location.reload();
-              }}
-            >
-              Log out
-            </button>
-            {code}
-            {/* <Link to="/login">Log In or Auth</Link>*/}
+            <button onClick={exitHandler}>Log out</button>
           </ul>
         </nav>
       </main>
