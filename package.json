@@ -24,7 +24,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "local": "react-scripts start",
+    "local": "set HTTPS=true&&react-scripts start",
     "start": "HTTPS=true SSL_CRT_FILE=/etc/nginx/ssl/client.crt SSL_KEY_FILE=/etc/nginx/ssl/client.key react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

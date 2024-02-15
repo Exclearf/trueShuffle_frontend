@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -9,7 +8,6 @@ export const useAuth = () => {
    * @returns {string | undefined} Undefined if no accessToken exists
    */
   const getSession = () => {
-    console.log(Cookies.get("trueShuffleUserID"));
     return {
       accessToken: Cookies.get("trueShuffleUser/accessToken"),
       refreshToken: Cookies.get("trueShuffleUser/refreshToken"),
@@ -27,10 +25,13 @@ export const useAuth = () => {
    */
   const createSession = async (code: string) => {
     try {
-      const response = await axios.post("http://localhost:3000/login", {
+      console.log("createSession!1");
+      const response = await axios.post("https://backend-trueshuffle.encape.me/login", {
         code,
       });
+      console.log("createSession!2");
       let expiresIn: any = (response.data.expiresIn - 60) * 1000;
+      console.log("createSession!3");
       const authData = {
         accessToken: Cookies.set(
           response.data.accessToken,
@@ -54,6 +55,7 @@ export const useAuth = () => {
           }
         ),
       };
+      console.log("createSession!4");
       return authData;
     } catch (e) {
       window.location.href = "/";
@@ -100,7 +102,7 @@ export const useAuth = () => {
     try {
       if (!getSession().refreshToken || !getSession().expiresIn) {
         const timeout = setTimeout(async () => {
-          const response = await axios.post("http://localhost:3000/refresh", {
+          const response = await axios.post("https://backend-trueshuffle.encape.me/refresh", {
             refreshToken: getSession().refreshToken,
           });
           Cookies.set(
@@ -112,7 +114,7 @@ export const useAuth = () => {
           Cookies.set(response.data.expiresIn, "trueShuffleUser/expiresIn", {
             expires: response.data.expiresIn,
           });
-          
+
           return true;
         }, ((getSession().expiresIn as any) - 60) * 1000);
       } else {
@@ -127,19 +129,20 @@ export const useAuth = () => {
     }
   };
 
-  const createCookie = () => {
-    Cookies.set("trueShuffleUserID", "1", { expires: 1 });
-  };
-  const deleteCookie = () => {
-    Cookies.remove("trueShuffleUserID");
+  /**
+   * Function that checks whether there is a saved session in the cookies.
+   *
+   * @returns {boolean} True if there is an accessToken saved
+   */
+  const isActiveSession = () => {
+    return getSession().accessToken !== undefined;
   };
 
   return [
     getSession,
     createSession,
+    isActiveSession,
     endSession,
     extendSession,
-    createCookie,
-    deleteCookie,
   ] as const;
 };

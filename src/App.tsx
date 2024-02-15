@@ -8,20 +8,21 @@ import { useEffect } from "react";
 const code = new URLSearchParams(window.location.search).get("code");
 
 const App = () => {
-  const [getSession, CreateSession, createCookie, deleteCookie] = useAuth();
+  const [getSession, createSession, isActiveSession] = useAuth();
 
   useEffect(() => {
     if (!code) return;
-    CreateSession(code);
+    createSession(code);
+    console.log("SESSION: " + code);
+    console.log(getSession());
   }, [code]);
-
   return (
     <main>
       <Routes>
         <Route
           path="/"
           element={
-            getSession() ? (
+            isActiveSession() ? (
               <Index code={getSession().accessToken} />
             ) : (
               <Navigate to="/login" />
@@ -30,9 +31,7 @@ const App = () => {
         />
         <Route
           path="login"
-          element={
-            getSession() ? <Navigate to="/" /> : <LogIn logIn={createCookie} />
-          }
+          element={isActiveSession() ? <Navigate to="/" /> : <LogIn />}
         />
       </Routes>
     </main>
