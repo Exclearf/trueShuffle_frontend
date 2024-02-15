@@ -37,7 +37,7 @@ export const useAuth = () => {
         }
       );
 
-      if (response.status != 200) {
+      if (response.status !== 200) {
         return;
       }
 
@@ -95,7 +95,7 @@ export const useAuth = () => {
               refreshToken: getSession().refreshToken,
             }
           );
-          if (response.status != 208) {
+          if (response.status !== 208) {
             return;
           }
           Cookies.set(
