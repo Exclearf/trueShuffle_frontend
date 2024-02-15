@@ -24,8 +24,6 @@ export const useAuth = () => {
    * @returns {boolean} True if user has been successfully signed in
    */
   const createSession = (code: string) => {
-    console.log("The code is: " + code);
-    console.log("createSession!1");
     const response = axios
       .post("https://backend-trueshuffle.encape.me/login", {
         code,
@@ -35,25 +33,24 @@ export const useAuth = () => {
         Cookies.set("trueShuffleUser/accessToken", response.data.accessToken, {
           expires: response.data.expiresIn,
         });
-        Cookies.set("trueShuffleUser/refreshToken", response.data.refreshToken, {
+        Cookies.set(
+          "trueShuffleUser/refreshToken",
+          response.data.refreshToken,
+          {
             expires: response.data.expiresIn,
-        });
+          }
+        );
         Cookies.set("trueShuffleUser/expiresIn", response.data.expiresIn, {
           expires: response.data.expiresIn,
         });
         //@ts-ignore
         window.history.pushState({}, null, "/");
-        console.log("---------END OF FUNC--------");
-        console.log(`response.data.accessToken ${response.data.accessToken}`);
-        console.log(`response.data.refreshToken ${response.data.refreshToken}`);
-        console.log(`response.data.expiresIn ${response.data.expiresIn}`);
-        console.log("----------------------------");
       })
       .catch(() => {
         window.location = "/" as any;
       });
     console.log(response);
-    return false;
+    window.location.reload();
   };
 
   /**
@@ -64,16 +61,10 @@ export const useAuth = () => {
    */
   const endSession = (): boolean => {
     try {
-      //! Make a call to the Back End to end a session
-      let isSucceded = true;
-      if (isSucceded) {
-        Cookies.remove("trueShuffleUser/accessToken");
-        Cookies.remove("trueShuffleUser/refreshToken");
-        Cookies.remove("trueShuffleUser/expiresIn");
-        return true;
-      } else {
-        return false;
-      }
+      Cookies.remove("trueShuffleUser/accessToken");
+      Cookies.remove("trueShuffleUser/refreshToken");
+      Cookies.remove("trueShuffleUser/expiresIn");
+      return true;
     } catch (e) {
       console.error(
         `There has been a problem while deleting a session\nStack trace: ${e}}`
@@ -98,12 +89,16 @@ export const useAuth = () => {
               refreshToken: getSession().refreshToken,
             }
           );
-          Cookies.set( "trueShuffleUser/refreshToken", response.data.refreshToken, { 
-            expires: response.data.accessToken 
-          });
+          Cookies.set(
+            "trueShuffleUser/refreshToken",
+            response.data.refreshToken,
+            {
+              expires: response.data.accessToken,
+            }
+          );
 
           Cookies.set("trueShuffleUser/expiresIn", response.data.expiresIn, {
-            expires: response.data.expiresIn
+            expires: response.data.expiresIn,
           });
           return timeout ? true : false;
         }, ((getSession().expiresIn as any) - 60) * 1000);
