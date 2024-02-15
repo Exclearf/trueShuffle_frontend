@@ -60,9 +60,18 @@ export const useAuth = () => {
    */
   const endSession = (): boolean => {
     try {
-      Cookies.remove("trueShuffleUser/accessToken");
-      Cookies.remove("trueShuffleUser/refreshToken");
-      Cookies.remove("trueShuffleUser/expiresIn");
+      Cookies.remove("trueShuffleUser/accessToken", {
+        path: "/",
+        domain: "encape.me",
+      });
+      Cookies.remove("trueShuffleUser/refreshToken", {
+        path: "/",
+        domain: "encape.me",
+      });
+      Cookies.remove("trueShuffleUser/expiresIn", {
+        path: "/",
+        domain: "encape.me",
+      });
       setIsLogged(false);
       return true;
     } catch (e) {
