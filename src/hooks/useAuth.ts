@@ -131,6 +131,7 @@ export const useAuth = () => {
    * @returns {boolean} True if there is an accessToken saved
    */
   const isActiveSession = () => {
+    console.log("IsActiveSession: " + getSession().accessToken);
     return getSession().accessToken !== undefined;
   };
 
