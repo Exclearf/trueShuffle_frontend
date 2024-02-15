@@ -13,9 +13,7 @@ const App = () => {
   useEffect(() => {
     if (!code) return;
     createSession(code);
-    console.log("SESSION: " + code);
-    console.log(getSession());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code]);
   return (
     <main>

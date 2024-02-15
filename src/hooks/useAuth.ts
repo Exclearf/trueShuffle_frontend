@@ -45,12 +45,12 @@ export const useAuth = () => {
         });
         //@ts-ignore
         window.history.pushState({}, null, "/");
+        window.location.reload();
       })
       .catch(() => {
         window.location = "/" as any;
       });
     console.log(response);
-    window.location.reload();
   };
 
   /**
