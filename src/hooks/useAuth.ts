@@ -24,54 +24,40 @@ export const useAuth = () => {
    * @returns {boolean} True if user has been successfully signed in
    */
   const createSession = (code: string) => {
-    try {
-      console.log("The code is: " + code);
-      console.log("createSession!1");
-      const response = axios
-        .post("https://backend-trueshuffle.encape.me/login", {
-          code,
-        })
-        .then((response) => {
-          console.log("createSession!2 INSIDE RESPONSE");
-          Cookies.set(
-            response.data.accessToken,
-            "trueShuffleUser/accessToken",
-            { expires: response.data.expiresIn }
-          );
-          Cookies.set(
-            response.data.refreshToken,
-            "trueShuffleUser/refreshToken",
-            {
-              expires: response.data.expiresIn,
-            }
-          );
-          Cookies.set(response.data.expiresIn, "trueShuffleUser/expiresIn", {
-            expires: response.data.expiresIn,
-          });
-          //@ts-ignore
-          window.history.pushState({}, null, "/");
-          console.log("---------END OF FUNC--------")
-          console.log(`response.data.accessToken ${response.data.accessToken}`)
-          console.log(`response.data.refreshToken ${response.data.refreshToken}`)
-          console.log(`response.data.expiresIn ${response.data.expiresIn}`)
-          console.log("----------------------------")
-        })
-        .catch(() => {
-          window.location = "/" as any;
+    console.log("The code is: " + code);
+    console.log("createSession!1");
+    const response = axios
+      .post("https://backend-trueshuffle.encape.me/login", {
+        code,
+      })
+      .then((response) => {
+        console.log("createSession!2 INSIDE RESPONSE");
+        Cookies.set(response.data.accessToken, "trueShuffleUser/accessToken", {
+          expires: response.data.expiresIn,
         });
-      console.log(response);
-      //console.log("createSession!2");
-      //let expiresIn: any = (response.data.expiresIn - 60) * 1000;
-      //console.log("createSession!3");
-      //console.log("createSession!4");
-      //return authData;
-    } catch (e) {
-      window.location.href = "/";
-      console.error(
-        `There has been a problem while deleting a session\nStack trace: ${e}}`
-      );
-      return false;
-    }
+        Cookies.set(
+          response.data.refreshToken,
+          "trueShuffleUser/refreshToken",
+          {
+            expires: response.data.expiresIn,
+          }
+        );
+        Cookies.set(response.data.expiresIn, "trueShuffleUser/expiresIn", {
+          expires: response.data.expiresIn,
+        });
+        //@ts-ignore
+        window.history.pushState({}, null, "/");
+        console.log("---------END OF FUNC--------");
+        console.log(`response.data.accessToken ${response.data.accessToken}`);
+        console.log(`response.data.refreshToken ${response.data.refreshToken}`);
+        console.log(`response.data.expiresIn ${response.data.expiresIn}`);
+        console.log("----------------------------");
+      })
+      .catch(() => {
+        window.location = "/" as any;
+      });
+    console.log(response);
+    return false;
   };
 
   /**
