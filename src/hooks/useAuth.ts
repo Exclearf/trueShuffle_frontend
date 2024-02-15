@@ -1,8 +1,10 @@
 import axios from "axios";
-import Cookies from "js-cookie";
+import { useCookies } from "react-cookie";
 import { useState } from "react";
 
 export const useAuth = () => {
+  const [cookies, setCookie, removeCookie] = useCookies();
+
   /**
    * Function which checks whether the user has an unexpired cookie
    *
@@ -10,9 +12,9 @@ export const useAuth = () => {
    */
   const getSession = () => {
     return {
-      accessToken: Cookies.get("trueShuffleUser/accessToken"),
-      refreshToken: Cookies.get("trueShuffleUser/refreshToken"),
-      expiresIn: Cookies.get("trueShuffleUser/expiresIn"),
+      accessToken: cookies.accessToken,
+      refreshToken: cookies.refreshToken,
+      expiresIn: cookies.expiresIn,
     };
   };
 
@@ -41,9 +43,9 @@ export const useAuth = () => {
         return;
       }
 
-      Cookies.set("trueShuffleUser/accessToken", response.data.accessToken);
-      Cookies.set("trueShuffleUser/refreshToken", response.data.refreshToken);
-      Cookies.set("trueShuffleUser/expiresIn", response.data.expiresIn);
+      setCookie("trueShuffleUser/accessToken", response.data.accessToken);
+      setCookie("trueShuffleUser/refreshToken", response.data.refreshToken);
+      setCookie("trueShuffleUser/expiresIn", response.data.expiresIn);
       //@ts-ignore
       window.history.pushState({}, null, "/");
       setIsLogged(true);
@@ -60,18 +62,9 @@ export const useAuth = () => {
    */
   const endSession = (): boolean => {
     try {
-      Cookies.remove("trueShuffleUser/accessToken", {
-        path: "/",
-        domain: "encape.me",
-      });
-      Cookies.remove("trueShuffleUser/refreshToken", {
-        path: "/",
-        domain: "encape.me",
-      });
-      Cookies.remove("trueShuffleUser/expiresIn", {
-        path: "/",
-        domain: "encape.me",
-      });
+      removeCookie("trueShuffleUser/accessToken");
+      removeCookie("trueShuffleUser/refreshToken");
+      removeCookie("trueShuffleUser/expiresIn");
       setIsLogged(false);
       return true;
     } catch (e) {
@@ -101,7 +94,7 @@ export const useAuth = () => {
           if (response.status !== 208) {
             return;
           }
-          Cookies.set(
+          setCookie(
             "trueShuffleUser/refreshToken",
             response.data.refreshToken,
             {
@@ -109,7 +102,7 @@ export const useAuth = () => {
             }
           );
 
-          Cookies.set("trueShuffleUser/expiresIn", response.data.expiresIn, {
+          setCookie("trueShuffleUser/expiresIn", response.data.expiresIn, {
             expires: response.data.expiresIn,
           });
           setIsLogged(!!timeout);
