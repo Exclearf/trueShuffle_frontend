@@ -25,6 +25,7 @@ export const useAuth = () => {
    */
   const createSession = async (code: string) => {
     try {
+      console.log("The code is: " + code);
       console.log("createSession!1");
       const response = await axios.post("https://backend-trueshuffle.encape.me/login", {
         code,
