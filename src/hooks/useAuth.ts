@@ -23,41 +23,44 @@ export const useAuth = () => {
    *
    * @returns {boolean} True if user has been successfully signed in
    */
-  const createSession = async (code: string) => {
+  const createSession = (code: string) => {
     try {
       console.log("The code is: " + code);
       console.log("createSession!1");
-      const response = await axios.post("https://backend-trueshuffle.encape.me/login", {
-        code,
-      });
-      console.log("createSession!2");
-      let expiresIn: any = (response.data.expiresIn - 60) * 1000;
-      console.log("createSession!3");
-      const authData = {
-        accessToken: Cookies.set(
-          response.data.accessToken,
-          "trueShuffleUser/accessToken",
-          {
-            expires: expiresIn,
-          }
-        ),
-        refreshToken: Cookies.set(
-          response.data.refreshToken,
-          "trueShuffleUser/refreshToken",
-          {
-            expires: expiresIn,
-          }
-        ),
-        expiresIn: Cookies.set(
-          response.data.expiresIn,
-          "trueShuffleUser/expiresIn",
-          {
-            expires: expiresIn,
-          }
-        ),
-      };
-      console.log("createSession!4");
-      return authData;
+      const response = axios
+        .post("https://backend-trueshuffle.encape.me/login", {
+          code,
+        })
+        .then((response) => {
+          console.log("createSession!2 INSIDE RESPONSE");
+          Cookies.set(
+            response.data.accessToken,
+            "trueShuffleUser/accessToken",
+            { expires: response.data.expiresIn }
+          );
+          Cookies.set(
+            response.data.refreshToken,
+            "trueShuffleUser/refreshToken",
+            {
+              expires: response.data.expiresIn,
+            }
+          );
+          Cookies.set(response.data.expiresIn, "trueShuffleUser/expiresIn", {
+            expires: response.data.expiresIn,
+          });
+          //@ts-ignore
+          window.history.pushState({}, null, "/");
+          console.log("createSession!2 INSIDE RESPONSE END");
+        })
+        .catch(() => {
+          window.location = "/" as any;
+        });
+      console.log(response);
+      //console.log("createSession!2");
+      //let expiresIn: any = (response.data.expiresIn - 60) * 1000;
+      //console.log("createSession!3");
+      //console.log("createSession!4");
+      //return authData;
     } catch (e) {
       window.location.href = "/";
       console.error(
@@ -103,9 +106,12 @@ export const useAuth = () => {
     try {
       if (!getSession().refreshToken || !getSession().expiresIn) {
         const timeout: any = setTimeout(async () => {
-          const response = await axios.post("https://backend-trueshuffle.encape.me/refresh", {
-            refreshToken: getSession().refreshToken,
-          });
+          const response = await axios.post(
+            "https://backend-trueshuffle.encape.me/refresh",
+            {
+              refreshToken: getSession().refreshToken,
+            }
+          );
           Cookies.set(
             response.data.refreshToken,
             "trueShuffleUser/refreshToken",
