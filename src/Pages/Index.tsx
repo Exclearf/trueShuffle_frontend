@@ -1,9 +1,7 @@
 import { Outlet } from "react-router-dom";
 
 //@ts-ignore
-const Index = ({ code, setCode }) => {
-  let codeParam = new URLSearchParams(window.location.search).get("code");
-  if (!codeParam) setCode(codeParam);
+const Index = ({ code }) => {
   return (
     <div>
       <header>

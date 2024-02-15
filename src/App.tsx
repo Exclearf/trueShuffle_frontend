@@ -3,17 +3,19 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import Index from "./Pages/Index";
 import LogIn from "./Pages/LogIn";
 import { useAuth } from "./hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+
+const code = new URLSearchParams(window.location.search).get("code");
 
 const App = () => {
-  const [code, setCode] = useState(new URLSearchParams(window.location.search).get("code"))
   const [getSession, createSession, isActiveSession] = useAuth();
-//@ts-ignore
-   useEffect(() => {
+
+  useEffect(() => {
     if (!code) return;
     createSession(code);
     console.log("SESSION: " + code);
     console.log(getSession());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code]);
   return (
     <main>
@@ -22,8 +24,7 @@ const App = () => {
           path="/"
           element={
             isActiveSession() ? (
-              //@ts-ignore
-              <Index code={getSession().accessToken} setCode={setCode} />
+              <Index code={getSession().accessToken} />
             ) : (
               <Navigate to="/login" />
             )
