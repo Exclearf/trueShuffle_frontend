@@ -32,17 +32,13 @@ export const useAuth = () => {
       })
       .then((response) => {
         console.log("createSession!2 INSIDE RESPONSE");
-        Cookies.set(response.data.accessToken, "trueShuffleUser/accessToken", {
+        Cookies.set("trueShuffleUser/accessToken", response.data.accessToken, {
           expires: response.data.expiresIn,
         });
-        Cookies.set(
-          response.data.refreshToken,
-          "trueShuffleUser/refreshToken",
-          {
+        Cookies.set("trueShuffleUser/refreshToken", response.data.refreshToken, {
             expires: response.data.expiresIn,
-          }
-        );
-        Cookies.set(response.data.expiresIn, "trueShuffleUser/expiresIn", {
+        });
+        Cookies.set("trueShuffleUser/expiresIn", response.data.expiresIn, {
           expires: response.data.expiresIn,
         });
         //@ts-ignore
@@ -102,14 +98,12 @@ export const useAuth = () => {
               refreshToken: getSession().refreshToken,
             }
           );
-          Cookies.set(
-            response.data.refreshToken,
-            "trueShuffleUser/refreshToken",
-            { expires: response.data.accessToken }
-          );
+          Cookies.set( "trueShuffleUser/refreshToken", response.data.refreshToken, { 
+            expires: response.data.accessToken 
+          });
 
-          Cookies.set(response.data.expiresIn, "trueShuffleUser/expiresIn", {
-            expires: response.data.expiresIn,
+          Cookies.set("trueShuffleUser/expiresIn", response.data.expiresIn, {
+            expires: response.data.expiresIn
           });
           return timeout ? true : false;
         }, ((getSession().expiresIn as any) - 60) * 1000);
