@@ -13,7 +13,7 @@ const App = () => {
   useEffect(() => {
     if (!code) return;
     createSession(code);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [code]);
   return (
     <main>

@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useState } from "react";
 
 export const useAuth = () => {
   /**
@@ -15,6 +16,10 @@ export const useAuth = () => {
     };
   };
 
+  const [isLogged, setIsLogged] = useState(
+    getSession().accessToken !== undefined
+  );
+
   /**
    * Function which sends an authorization request to the server.
    * If the User ID is unknown, the respective error is thrown.
@@ -24,6 +29,7 @@ export const useAuth = () => {
    * @returns {boolean} True if user has been successfully signed in
    */
   const createSession = (code: string) => {
+    // eslint-disable-next-line
     const response = axios
       .post("https://backend-trueshuffle.encape.me/login", {
         code,
@@ -45,12 +51,11 @@ export const useAuth = () => {
         });
         //@ts-ignore
         window.history.pushState({}, null, "/");
-        window.location.reload();
+        setIsLogged(true);
       })
       .catch(() => {
         window.location = "/" as any;
       });
-    console.log(response);
   };
 
   /**
@@ -64,6 +69,7 @@ export const useAuth = () => {
       Cookies.remove("trueShuffleUser/accessToken");
       Cookies.remove("trueShuffleUser/refreshToken");
       Cookies.remove("trueShuffleUser/expiresIn");
+      setIsLogged(false);
       return true;
     } catch (e) {
       console.error(
@@ -79,7 +85,7 @@ export const useAuth = () => {
    *
    * @returns {boolean} True if it prolonged the current session.
    */
-  const extendSession = () => {
+  const extendSession = (): void => {
     try {
       if (!getSession().refreshToken || !getSession().expiresIn) {
         const timeout: any = setTimeout(async () => {
@@ -100,17 +106,17 @@ export const useAuth = () => {
           Cookies.set("trueShuffleUser/expiresIn", response.data.expiresIn, {
             expires: response.data.expiresIn,
           });
-          return timeout ? true : false;
+          setIsLogged(!!timeout);
         }, ((getSession().expiresIn as any) - 60) * 1000);
       } else {
-        return false;
+        setIsLogged(false);
       }
     } catch (e) {
       window.location.href = "/";
       console.error(
         `There has been a problem while deleting a session\nStack trace: ${e}}`
       );
-      return false;
+      setIsLogged(false);
     }
   };
 
@@ -120,8 +126,7 @@ export const useAuth = () => {
    * @returns {boolean} True if there is an accessToken saved
    */
   const isActiveSession = () => {
-    console.log("IsActiveSession: " + getSession().accessToken);
-    return getSession().accessToken !== undefined;
+    return isLogged;
   };
 
   return [
