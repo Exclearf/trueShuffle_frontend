@@ -54,7 +54,9 @@ export const useAuth = () => {
       window.history.pushState({}, null, "/");
       setIsLogged(true);
     } catch {
-      () => (window.location = "/" as any);
+      () => {
+        window.location = "/" as any;
+      };
     }
   };
 
