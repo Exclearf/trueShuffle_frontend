@@ -101,7 +101,7 @@ export const useAuth = () => {
   const extendSession = () => {
     try {
       if (!getSession().refreshToken || !getSession().expiresIn) {
-        const timeout = setTimeout(async () => {
+        const timeout: any = setTimeout(async () => {
           const response = await axios.post("https://backend-trueshuffle.encape.me/refresh", {
             refreshToken: getSession().refreshToken,
           });
@@ -114,8 +114,7 @@ export const useAuth = () => {
           Cookies.set(response.data.expiresIn, "trueShuffleUser/expiresIn", {
             expires: response.data.expiresIn,
           });
-
-          return true;
+          return timeout ? true : false;
         }, ((getSession().expiresIn as any) - 60) * 1000);
       } else {
         return false;
