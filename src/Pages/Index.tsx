@@ -3,7 +3,7 @@ import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import Body from "./components/Body";
 import Footer from "./components/Footer";
-const Container = styled.div``;
+import Container from "./StyledPages/IndexStyled";
 
 //@ts-ignore
 const Index = ({ exitHandler }) => {
