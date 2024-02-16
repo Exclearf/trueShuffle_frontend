@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import Body from "./components/Body";
