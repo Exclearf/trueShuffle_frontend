@@ -23,7 +23,7 @@ const App = () => {
         <Route
           path="/"
           element={
-            !isActiveSession() ? (
+            isActiveSession() ? (
               <Index exitHandler={endSession}/>
             ) : (
               <Navigate to="/login" />

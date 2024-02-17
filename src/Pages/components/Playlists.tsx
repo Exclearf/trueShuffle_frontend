@@ -1,4 +1,4 @@
-import {useState } from "react";
+
 import PlaylistsStyled from "./StyledComponents/PlaylistsStyles";
 
 
@@ -10,7 +10,7 @@ export default function Playlists({ playlists }) {
       {playlists.map((playlist: any, index: any) => (
         <div key={index} className="playlist">
           <div className="playlist_cover">
-            <img src={playlist.image} />
+            <img src={playlist.image} alt="no album cover" />
           </div>
           <div className="description">
             <p className="playlist_name">{playlist.name}</p>
