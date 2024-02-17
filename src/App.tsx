@@ -21,7 +21,7 @@ const App = () => {
         <Route
           path="/"
           element={
-            !isActiveSession() ? (
+            isActiveSession() ? (
               <Index token={getSession().accessToken}/>
             ) : (
               <Navigate to="/login" />
