@@ -4,7 +4,8 @@ const SettingsWheel = styled.div`
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  transition: all 1s;
+  transition: all 500ms;
+  transition-delay: 300ms;
   position: absolute;
   background-color: rgb(36, 36, 36);
   top: 0;
@@ -18,7 +19,6 @@ const SettingsWheel = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  transition-delay: 300ms;
   &:hover {
     transition-delay: 0s;
     color: #ebe1e1;
