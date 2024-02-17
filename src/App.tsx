@@ -10,8 +10,6 @@ const code = new URLSearchParams(window.location.search).get("code");
 const App = () => {
   const [getSession, createSession, isActiveSession] = useAuth();
 
-  console.log("isActive: " + isActiveSession())
-  console.log("Code: " + code);
   useEffect(() => {
     if (!code) return;
     createSession(code);

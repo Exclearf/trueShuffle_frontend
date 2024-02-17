@@ -70,11 +70,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
       texts.forEach((elem, index) => {
         const rotation = index * anglePerText + anglePerText / 2;
         const angle = rotation * (Math.PI / 180);
-        console.log(
-          circleRadius - elem.getBoundingClientRect().width < 0
-            ? circleRadius - elem.getBoundingClientRect().width
-            : 20
-        );
         const textRadius = circleRadius - 20;
         const x = textRadius * Math.cos(angle);
         const y = textRadius * Math.sin(angle);

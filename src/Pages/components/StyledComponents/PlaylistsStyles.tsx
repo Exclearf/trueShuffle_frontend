@@ -12,8 +12,8 @@ const PlaylistsStyled = styled.div`
   color-scheme: dark;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-  column-gap: 40px;
-  padding: 20px;
+  gap: 35px;
+  padding: 15px;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -33,6 +33,7 @@ const PlaylistsStyled = styled.div`
     flex-direction: column;
     align-items: center;
     overflow: hidden;
+    min-width: 260px;
     width: 270px;
     padding: 15px;
     background-color: var(--playlist-bg);
@@ -40,7 +41,7 @@ const PlaylistsStyled = styled.div`
     cursor: pointer;
     transition: background-color ease 0.4s;
     position: relative;
-    min-height: 350px;
+    min-height: 325px;
 
     &:hover {
       background-color: var(--playlist-hover-bg);
@@ -49,7 +50,7 @@ const PlaylistsStyled = styled.div`
 
   .playlist_cover img {
     width: 100%;
-    border-radius: 6px; // Ensuring consistency in border-radius
+    border-radius: 6px; 
   }
 
   .description {
@@ -60,7 +61,8 @@ const PlaylistsStyled = styled.div`
     width: 100%;
   }
 
-  .playlist_name, .playlist_author {
+  .playlist_name,
+  .playlist_author {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -69,12 +71,12 @@ const PlaylistsStyled = styled.div`
   .playlist_name {
     color: var(--description-color);
     font-size: 20px;
-    font-weight: bold; 
+    font-weight: bold;
   }
 
   .playlist_author {
     color: var(--author-color);
-    font-size: 16px; 
+    font-size: 16px;
   }
 `;
 
