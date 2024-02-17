@@ -1,24 +1,36 @@
-
-import PlaylistsStyled from "./StyledComponents/PlaylistsStyles";
-
-
+import { useState, useEffect } from "react";
+import { PlaylistsStyledLong, PlaylistsStyledShort } from "./StyledComponents/PlaylistsStyles";
 
 //@ts-ignore
 export default function Playlists({ playlists }) {
+  const [longStyle, setLongStyle] = useState(false);
+
+  useEffect(() => {
+    setLongStyle(!longStyle)
+  }, [])
+
+  useEffect(() => {
+    console.log(longStyle ? "Long style activated" : "Short style activated");
+  }, [longStyle]);
+
+  // Determine which styled component to use based on longStyle
+  const StyledComponent = longStyle ? PlaylistsStyledLong : PlaylistsStyledShort;
+
   return (
-    <PlaylistsStyled>
-      {playlists.map((playlist: any, index: any) => (
-        <div key={index} className="playlist">
-          <div className="playlist_cover">
-            <img src={playlist.image} alt="no album cover" />
+    <>
+      <StyledComponent>
+        {playlists.map((playlist: any, index: any) => (
+          <div key={index} className="playlist">
+            <div className="playlist_cover">
+              <img src={playlist.image} alt="Playlist cover" />
+            </div>
+            <div className="description">
+              <p className="playlist_name">{playlist.name}</p>
+              <p className="playlist_author">{playlist.author}</p>
+            </div>
           </div>
-          <div className="description">
-            <p className="playlist_name">{playlist.name}</p>
-            {/* If album - band name, if playlist - username, if spotify-generated - Spotify(?) */}
-            <p className="playlist_author">{playlist.author}</p>
-          </div>
-        </div>
-      ))}
-    </PlaylistsStyled>
+        ))}
+      </StyledComponent>
+    </>
   );
 }
