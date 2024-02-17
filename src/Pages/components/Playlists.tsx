@@ -3,10 +3,10 @@ import { PlaylistsStyledLong, PlaylistsStyledShort } from "./StyledComponents/Pl
 
 //@ts-ignore
 export default function Playlists({ playlists }) {
-  const [longStyle, setLongStyle] = useState(false);
+  const [longStyle, setLongStyle] = useState(true);
 
   useEffect(() => {
-    setLongStyle(!longStyle)
+    setLongStyle(prevLongStyle => !prevLongStyle);
   }, [])
 
   useEffect(() => {
