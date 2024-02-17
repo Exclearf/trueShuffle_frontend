@@ -61,13 +61,29 @@ const playlistsList = [
   },
 ];
 
+const textArray = [
+  "Lorem ipsum dolor sit amet",
+  "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsum, quam?",
+  "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+  "Lorem ipsum dolor sit.",
+  "Lorem ipsum dolor sit, amet consectetur",
+  "Lorem ipsum dolor sit, amet consectetur",
+  "Lorem ipsum dolor sit, amet consectetur",
+  "Lorem ipsum dolor sit, amet consectetur",
+  "Lorem ipsum dolor sit, amet consectetur",
+  "Lorem ipsum dolor sit, amet consectetur",
+  "Lorem ipsum dolor sit, amet consectetur",
+  "Lorem ipsum dolor sit, amet consectetur",
+  "Lorem ipsum dolor sit, amet consectetur",
+];
+
 //@ts-ignore
 const Index = ({ exitHandler }) => {
   return (
     <IndexStyled>
       <Search />
       <Playlists playlists={playlistsList} />
-      <SettingsPage />
+      <SettingsPage texts={textArray} />
       <CurrentlyPlaying />
     </IndexStyled>
   );

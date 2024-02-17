@@ -1,11 +1,14 @@
 import styled from "styled-components";
 
-interface DivProps {
-  width: number; // Add other prop types here if needed
-}
-
-const SettingsPageStyled = styled.div<DivProps>`
+const SettingsPageStyled = styled.div`
   grid-area: settingsWheel;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  width: 100%;
+  .settingsWheelContainer{
+    position: relative;
+  }
 `;
 
 export default SettingsPageStyled;
