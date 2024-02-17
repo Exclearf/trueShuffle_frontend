@@ -8,7 +8,7 @@ import { useEffect } from "react";
 const code = new URLSearchParams(window.location.search).get("code");
 
 const App = () => {
-  const [, createSession, isActiveSession, endSession] = useAuth();
+  const [getSession, createSession, isActiveSession] = useAuth();
 
   console.log("isActive: " + isActiveSession())
   console.log("Code: " + code);
@@ -18,13 +18,13 @@ const App = () => {
     // eslint-disable-next-line
   }, [code]);
   return (
-    <main>
+    <>
       <Routes>
         <Route
           path="/"
           element={
             isActiveSession() ? (
-              <Index exitHandler={endSession}/>
+              <Index token={getSession().accessToken}/>
             ) : (
               <Navigate to="/login" />
             )
@@ -35,7 +35,7 @@ const App = () => {
           element={isActiveSession() ? <Navigate to="/" /> : <LogIn />}
         />
       </Routes>
-    </main>
+    </>
   );
 };
 
