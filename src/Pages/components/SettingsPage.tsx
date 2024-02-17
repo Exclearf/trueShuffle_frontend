@@ -62,6 +62,27 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
     setRotation((currentRotation) => adjustRotation(currentRotation));
   };
 
+  // Touch event handlers
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    rotatingRef.current = true;
+    lastY.current = e.touches[0].clientY;
+    e.preventDefault();
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!rotatingRef.current) return;
+    const currentY = e.touches[0].clientY;
+    const deltaY = currentY - lastY.current;
+    setRotation((prevRotation) => prevRotation - deltaY * 0.5);
+    lastY.current = currentY;
+    e.preventDefault();
+  };
+
+  const handleTouchEnd = () => {
+    rotatingRef.current = false;
+    setRotation((currentRotation) => adjustRotation(currentRotation));
+  };
+
   useEffect(() => {
     if (circleRef.current && anglePerText) {
       const texts = circleRef.current.querySelectorAll(".settingsItem");
@@ -103,6 +124,9 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
           style={{ transform: `rotate(${rotation}deg)` }}
         >
           {renderTextElements()}
