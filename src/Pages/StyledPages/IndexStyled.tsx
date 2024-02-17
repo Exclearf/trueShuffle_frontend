@@ -1,24 +1,15 @@
 import styled from "styled-components";
-//Main style
-const Container = styled.div`
-  max-width: 100vw;
-  max-height: 100vh;
-  overflow: hidden;
-  display: grid;
-  grid-template-rows: 85 vh 15 vh;
-  .spotify_body {
-    display: grid;
-    grid-template-columns: 15 vw 85 vw;
-    height: 100%;
-    width: 100%;
-    .body {
-      height: 100%;
-      width: 100%;
-      overflow: auto;
 
-    }
-  }
-  
+const IndexStyled = styled.div`
+  background-color: inherit;
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  grid-template: 1fr 7fr 1fr / 100px 1fr 100px;
+  grid-template-areas: 
+    ". search ."
+    ". content settingsWheel"
+    "current current current";
   `;
 
-export default Container;
+export default IndexStyled;

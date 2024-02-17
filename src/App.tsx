@@ -18,12 +18,12 @@ const App = () => {
     // eslint-disable-next-line
   }, [code]);
   return (
-    <main>
+    <>
       <Routes>
         <Route
           path="/"
           element={
-            isActiveSession() ? (
+            !isActiveSession() ? (
               <Index exitHandler={endSession}/>
             ) : (
               <Navigate to="/login" />
@@ -35,7 +35,7 @@ const App = () => {
           element={isActiveSession() ? <Navigate to="/" /> : <LogIn />}
         />
       </Routes>
-    </main>
+    </>
   );
 };
 
