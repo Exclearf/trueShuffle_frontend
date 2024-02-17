@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install any dependencies
-RUN npm ci
+RUN npm ci --only=production
 
 # Bundle your app's source code inside the Docker image
 COPY . .
