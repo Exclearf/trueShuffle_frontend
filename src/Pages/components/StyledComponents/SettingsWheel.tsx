@@ -14,14 +14,15 @@ const SettingsWheel = styled.div`
   overflow: hidden;
   color: transparent;
   user-select: none;
-  border: 2px solid white; /* Optional */
+  border: 2px solid rgb(36, 36, 36);
   display: flex;
   justify-content: center;
   align-items: center;
-  transition-delay: 500ms;
+  transition-delay: 300ms;
   &:hover {
     transition-delay: 0s;
     color: #ebe1e1;
+    border-color: rgba(248, 237, 255, 0.5);
     background-color: rgb(36, 36, 36);
     width: 100vh;
     height: 100vh;

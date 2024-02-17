@@ -63,7 +63,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
   };
 
   useEffect(() => {
-    if (circleRef.current) {
+    if (circleRef.current && anglePerText) {
       const texts = circleRef.current.querySelectorAll(".settingsItem");
       const circleRadius = window.innerHeight / 2;
 
@@ -86,6 +86,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
         }deg)`;
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderTextElements = () => {

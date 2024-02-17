@@ -12,7 +12,7 @@ const PlaylistsStyled = styled.div`
   color-scheme: dark;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-  gap: 40px;
+  column-gap: 40px;
   padding: 20px;
 
   &::-webkit-scrollbar {
@@ -40,7 +40,7 @@ const PlaylistsStyled = styled.div`
     cursor: pointer;
     transition: background-color ease 0.4s;
     position: relative;
-    height: 350px;
+    min-height: 350px;
 
     &:hover {
       background-color: var(--playlist-hover-bg);

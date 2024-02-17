@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const CurrentlyPlayingStyled = styled.div`
   grid-area: current;
-  background-color: red;
+  background-color: rgb(36, 36, 36);
   display: grid;
   grid-template: 1fr / 100px 200px 1fr;
   grid-template-areas: "albumCover albumInfo albumControls";
