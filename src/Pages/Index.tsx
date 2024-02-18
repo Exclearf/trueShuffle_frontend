@@ -75,20 +75,17 @@ const Index = ({ token }) => {
 
   useEffect(() => {
     const fetchPlaylists = async () => {
-      let currentToken = token;
+      
+      console.log(token)
       const response = await fetch(
         "https://api.spotify.com/v1/me/playlists",
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${currentToken}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-
-      if(response.status === 401){
-        const newToken = '';
-      }
 
       if(response.ok) {
         const data = await response.json();
@@ -126,29 +123,3 @@ const Index = ({ token }) => {
 };
 
 export default Index;
-const playlistsList = [
-  {
-    name: "O kurwa AM",
-    author: "O kurwa Arctic Monkeys",
-    image:
-      "https://i.pinimg.com/originals/d8/b4/0d/d8b40d4be24986da9cace0c6f2be3cb0.jpg",
-  },
-  {
-    name: "O kurwa The Car",
-    author: " Arctic Monkeys",
-    image:
-      "https://imgb.ifunny.co/images/8048754e5027a976a860c24a1955b508064942822f4cd0ce898f2757e40e0dbd_1.jpg",
-  },
-  {
-    name: "O kurwa The Colour and the Shape",
-    author: "Foo Fighters",
-    image:
-      "https://upload.wikimedia.org/wikipedia/en/0/0d/FooFighters-TheColourAndTheShape.jpg",
-  },
-  {
-    name: "O kurwa In Rainbows",
-    author: "Radiohead",
-    image:
-      "https://media.pitchfork.com/photos/5929b2fe9d034d5c69bf4c59/1:1/w_450%2Cc_limit/7055fb4d.jpg",
-  },
-];

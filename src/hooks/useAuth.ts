@@ -11,6 +11,8 @@ export const useAuth = () => {
    * @returns {string | undefined} Undefined if no accessToken exists
    */
   const getSession = () => {
+    console.log("Access Token:", cookies.accessToken);
+    console.log("Refresh Token:", cookies.refreshToken);
     return {
       accessToken: cookies.accessToken,
       refreshToken: cookies.refreshToken,
