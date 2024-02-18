@@ -116,7 +116,7 @@ const Index = ({ token }) => {
         playlists={
           searchInput
             ? playlists?.filter((playlist: playlist) =>
-                playlist.name.includes(searchInput)
+                playlist.name.toLowerCase().includes(searchInput.toLowerCase())
               )
             : playlists
         }

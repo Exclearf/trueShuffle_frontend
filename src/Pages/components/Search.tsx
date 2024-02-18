@@ -1,7 +1,5 @@
 import SearchStyled from "./StyledComponents/SearchStyled";
 
-import { playlist } from "../Index";
-
 interface SettingsPageProps {
   setSearchInput: React.Dispatch<React.SetStateAction<string>>;
   searchInput: string;
