@@ -96,7 +96,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settingItems }) => {
         const textRadius = circleRadius - (elem.clientWidth/2 + 10);
         const x = textRadius * Math.cos(angle);
         const y = textRadius * Math.sin(angle);
-        console.log(elem.clientWidth);
         (elem as HTMLElement).style.left = `${circleRadius + x}px`;
         (elem as HTMLElement).style.top = `${circleRadius + y}px`;
         (elem as HTMLElement).style.transform = `translate(-50%, -50%) rotate(${
