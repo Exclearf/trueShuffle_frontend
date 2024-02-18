@@ -21,7 +21,7 @@ const App = () => {
         <Route
           path="/"
           element={
-            isActiveSession() ? (
+            (isActiveSession() && new RegExp('^https:\/\/encape\.me.*').test(window.location.href)) ? (
               <Index token={getSession().accessToken}/>
             ) : (
               <Navigate to="/login" />
