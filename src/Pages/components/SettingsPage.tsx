@@ -3,17 +3,21 @@ import SettingsWheel from "./StyledComponents/SettingsWheel";
 import SettingsPageStyled from "./StyledComponents/SettingsPageStyled";
 
 interface SettingsPageProps {
-  texts?: string[]; // Assuming texts is an optional prop
+  settingItems?: {
+    name: string;
+    handler: (value: boolean) => void;
+}[]
 }
 
-const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
+
+const SettingsPage: React.FC<SettingsPageProps> = ({ settingItems }) => {
   const [rotation, setRotation] = useState<number>(0);
   const [isWheelOpen, setIsWheelOpen] = useState<boolean>(true);
   const rotatingRef = useRef<boolean>(false);
   const lastY = useRef<number>(0);
   const circleRef = useRef<HTMLDivElement>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const numberOfTexts = texts?.length || 1; // Default to 5 if texts is not provided
+  const numberOfTexts = settingItems?.length || 1;
   const anglePerText = 360 / numberOfTexts;
 
   const handleScroll = (e: React.WheelEvent<HTMLDivElement>) => {
@@ -26,7 +30,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
     scrollTimeoutRef.current = setTimeout(() => {
       setRotation((currentRotation) => adjustRotation(currentRotation));
     }, 750);
-    e.preventDefault();
   };
 
   const adjustRotation = (currentRotation: number) => {
@@ -41,7 +44,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     rotatingRef.current = true;
     lastY.current = e.clientY;
-    e.preventDefault();
   };
 
   const handleMouseUp = () => {
@@ -54,7 +56,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
       const deltaY = e.clientY - lastY.current;
       setRotation((prevRotation) => prevRotation - deltaY * 0.5);
       lastY.current = e.clientY;
-      e.preventDefault();
     }
   };
 
@@ -68,7 +69,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
     rotatingRef.current = true;
     setIsWheelOpen(true);
     lastY.current = e.touches[0].clientY;
-    e.preventDefault();
   };
 
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
@@ -77,7 +77,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
     const deltaY = currentY - lastY.current;
     setRotation((prevRotation) => prevRotation - deltaY * 0.5);
     lastY.current = currentY;
-    e.preventDefault();
   };
 
   const handleTouchEnd = () => {
@@ -88,16 +87,16 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
 
   useEffect(() => {
     if (circleRef.current && anglePerText) {
-      const texts = circleRef.current.querySelectorAll(".settingsItem");
+      const settingItems = circleRef.current.querySelectorAll(".settingsItem");
       const circleRadius = window.innerHeight / 2;
 
-      texts.forEach((elem, index) => {
-        const rotation = index * anglePerText + anglePerText / 2;
+      settingItems.forEach((elem, index) => {
+        const rotation = index * anglePerText;
         const angle = rotation * (Math.PI / 180);
-        const textRadius = circleRadius - 20;
+        const textRadius = circleRadius - (elem.clientWidth/2 + 10);
         const x = textRadius * Math.cos(angle);
         const y = textRadius * Math.sin(angle);
-
+        console.log(elem.clientWidth);
         (elem as HTMLElement).style.left = `${circleRadius + x}px`;
         (elem as HTMLElement).style.top = `${circleRadius + y}px`;
         (elem as HTMLElement).style.transform = `translate(-50%, -50%) rotate(${
@@ -110,20 +109,23 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
 
   useEffect(() => {
     if (isWheelOpen) {
-      document.addEventListener('touchmove', handleTouchMove as any, { passive: false });
+      document.addEventListener("touchmove", handleTouchMove as any, {
+        passive: false,
+      });
     } else {
-      document.removeEventListener('touchmove', handleTouchMove as any);
+      document.removeEventListener("touchmove", handleTouchMove as any);
     }
-  
+
     return () => {
-      document.removeEventListener('touchmove', handleTouchMove as any);
+      document.removeEventListener("touchmove", handleTouchMove as any);
     };
   }, [isWheelOpen]);
 
   const renderTextElements = () => {
-    return texts?.map((text, index) => (
+    return settingItems?.map((item, index) => (
       <div key={index} className="settingsItem">
-        {text}
+        {item.name}
+        <input type="checkbox" onChange={(e) => item.handler(e.target.checked) as unknown as React.ChangeEventHandler<HTMLInputElement>} defaultChecked={true}/>
       </div>
     ));
   };

@@ -20,6 +20,34 @@ const Index = ({ token }) => {
   const [is_paused, setPaused] = useState(false);
   const [, setActive] = useState(false);
   const [current_track, setTrack] = useState(track);
+  const [longStyle, setLongStyle] = useState(true);
+
+  const settingItems = [
+    {
+      name: "Display as rows ",
+      handler: setLongStyle,
+    },
+    {
+      name: "Display as rows ",
+      handler: setLongStyle,
+    },
+    {
+      name: "Display as rows ",
+      handler: setLongStyle,
+    },
+    {
+      name: "Display as rows ",
+      handler: setLongStyle,
+    },
+    {
+      name: "Display as rows ",
+      handler: setLongStyle,
+    },
+    {
+      name: "Display as rows ",
+      handler: setLongStyle,
+    },
+  ];
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -67,8 +95,11 @@ const Index = ({ token }) => {
   return (
     <IndexStyled>
       <Search />
-      <Playlists playlists={Array(10).fill(playlistsList).flat()} />
-      <SettingsPage texts={textArray} />
+      <Playlists
+        playlists={Array(10).fill(playlistsList).flat()}
+        longStyle={longStyle}
+      />
+      <SettingsPage settingItems={settingItems} />
       {current_track.name !== "" ? (
         <CurrentlyPlaying
           currentTrack={current_track}
@@ -108,20 +139,4 @@ const playlistsList = [
     image:
       "https://media.pitchfork.com/photos/5929b2fe9d034d5c69bf4c59/1:1/w_450%2Cc_limit/7055fb4d.jpg",
   },
-];
-
-const textArray = [
-  "Lorem ipsum dolor sit amet",
-  "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsum, quam?",
-  "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-  "Lorem ipsum dolor sit.",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
 ];

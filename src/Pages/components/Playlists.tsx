@@ -2,18 +2,8 @@ import { useState, useEffect } from "react";
 import { PlaylistsStyledLong, PlaylistsStyledShort } from "./StyledComponents/PlaylistsStyles";
 
 //@ts-ignore
-export default function Playlists({ playlists }) {
-  const [longStyle, setLongStyle] = useState(true);
+export default function Playlists({ playlists, longStyle }) {
 
-  useEffect(() => {
-    setLongStyle(prevLongStyle => !prevLongStyle);
-  }, [])
-
-  useEffect(() => {
-    console.log(longStyle ? "Long style activated" : "Short style activated");
-  }, [longStyle]);
-
-  // Determine which styled component to use based on longStyle
   const StyledComponent = longStyle ? PlaylistsStyledLong : PlaylistsStyledShort;
 
   return (
