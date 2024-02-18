@@ -8,6 +8,7 @@ interface SettingsPageProps {
 
 const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
   const [rotation, setRotation] = useState<number>(0);
+  const [isWheelOpen, setIsWheelOpen] = useState<boolean>(true);
   const rotatingRef = useRef<boolean>(false);
   const lastY = useRef<number>(0);
   const circleRef = useRef<HTMLDivElement>(null);
@@ -16,7 +17,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
   const anglePerText = 360 / numberOfTexts;
 
   const handleScroll = (e: React.WheelEvent<HTMLDivElement>) => {
-    e.preventDefault();
     setRotation((prevRotation) => prevRotation + e.deltaY * 0.2);
 
     if (scrollTimeoutRef.current !== null) {
@@ -26,6 +26,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
     scrollTimeoutRef.current = setTimeout(() => {
       setRotation((currentRotation) => adjustRotation(currentRotation));
     }, 750);
+    e.preventDefault();
   };
 
   const adjustRotation = (currentRotation: number) => {
@@ -104,6 +105,19 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (isWheelOpen) {
+      document.addEventListener('touchmove', handleTouchMove as any, { passive: false });
+    } else {
+      document.removeEventListener('touchmove', handleTouchMove as any);
+    }
+  
+    return () => {
+      // Clean up listener when the component unmounts or the wheel closes
+      document.removeEventListener('touchmove', handleTouchMove as any);
+    };
+  }, [isWheelOpen]);
 
   const renderTextElements = () => {
     return texts?.map((text, index) => (
