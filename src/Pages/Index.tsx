@@ -69,7 +69,7 @@ const Index = ({ token }) => {
       <Search />
       <Playlists playlists={Array(10).fill(playlistsList).flat()} />
       <SettingsPage texts={textArray} />
-      {current_track.name === "" ? (
+      {current_track.name !== "" ? (
         <CurrentlyPlaying
           currentTrack={current_track}
           player={player}
