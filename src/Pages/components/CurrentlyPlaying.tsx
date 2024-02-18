@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import CurrentlyPlayingStyled from "./StyledComponents/CurrentlyPlayingStyle";
 
 interface CurrentlyPlayingProps {
@@ -17,6 +18,21 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
   player,
   isPaused,
 }) => {
+  const [volume, setVolume] = useState<number>(0);
+
+  const changeVolume = (val: any) => {
+    player.setVolume(val / 100);
+    setVolume(val / 100);
+  };
+
+  useEffect(() => {
+    //player.getVolume().then((val: number) => {
+    //  setVolume(val * 100);
+    //}).catch(() => {});
+
+    setVolume(0.5);
+  }, [player]);
+
   return (
     <CurrentlyPlayingStyled>
       <div className="songAlbumCover">
@@ -53,6 +69,21 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
         >
           &gt;&gt;
         </button>
+      </div>
+      <div className="playerControlButtons">
+        <div className="playerDevices">D</div>
+        <div className="playerQueue">Q</div>
+        <div className="playerVolume">
+        <button className="playerVolumeButton"/>
+        <input
+          className="playerVolumeInput"
+          type="range"
+          min={"0"}
+          max={"100"}
+          value={volume * 100}
+          onChange={(e) => changeVolume(e.target.value)}
+        />
+        </div>
       </div>
     </CurrentlyPlayingStyled>
   );

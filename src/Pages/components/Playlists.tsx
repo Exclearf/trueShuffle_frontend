@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { PlaylistsStyledLong, PlaylistsStyledShort } from "./StyledComponents/PlaylistsStyles";
 
 //@ts-ignore

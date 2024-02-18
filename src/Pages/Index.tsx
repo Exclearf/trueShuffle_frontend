@@ -21,28 +21,9 @@ const Index = ({ token }) => {
   const [, setActive] = useState(false);
   const [current_track, setTrack] = useState(track);
   const [longStyle, setLongStyle] = useState(true);
+  const [playlists, setPlaylists] = useState([]);
 
   const settingItems = [
-    {
-      name: "Display as rows ",
-      handler: setLongStyle,
-    },
-    {
-      name: "Display as rows ",
-      handler: setLongStyle,
-    },
-    {
-      name: "Display as rows ",
-      handler: setLongStyle,
-    },
-    {
-      name: "Display as rows ",
-      handler: setLongStyle,
-    },
-    {
-      name: "Display as rows ",
-      handler: setLongStyle,
-    },
     {
       name: "Display as rows ",
       handler: setLongStyle,
@@ -92,23 +73,54 @@ const Index = ({ token }) => {
     };
   }, [token]);
 
+  useEffect(() => {
+    const fetchPlaylists = async () => {
+      let currentToken = token;
+      const response = await fetch(
+        "https://api.spotify.com/v1/me/playlists",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${currentToken}`,
+          },
+        }
+      );
+
+      if(response.status === 401){
+        const newToken = '';
+      }
+
+      if(response.ok) {
+        const data = await response.json();
+        const formattedPlaylists = data.items.map((playlist: any) => ({
+          name: playlist.name,
+          author: playlist.owner.display_name,
+          image: playlist.images[0]?.url || ""
+        }))
+        setPlaylists(formattedPlaylists);
+      } else {
+        console.log("PLAYLISTS ERROR!!!!!!!!!" + response);
+      }
+    };
+
+    if(token){
+      fetchPlaylists();
+    }
+  }, [token]);
+
   return (
     <IndexStyled>
       <Search />
       <Playlists
-        playlists={Array(10).fill(playlistsList).flat()}
+        playlists={playlists}
         longStyle={longStyle}
       />
       <SettingsPage settingItems={settingItems} />
-      {current_track.name !== "" ? (
-        <CurrentlyPlaying
-          currentTrack={current_track}
-          player={player}
-          isPaused={is_paused}
-        />
-      ) : (
-        <></>
-      )}
+      <CurrentlyPlaying
+        currentTrack={current_track}
+        player={player}
+        isPaused={is_paused}
+      />
     </IndexStyled>
   );
 };
