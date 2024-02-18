@@ -9,19 +9,21 @@ const code = new URLSearchParams(window.location.search).get("code");
 
 const App = () => {
   const [getSession, createSession, isActiveSession] = useAuth();
-  const isLocal = new RegExp('^https://encape.me.*').test(window.location.href);
+  const isRemote = new RegExp('^https://encape.me.*').test(window.location.href);
   useEffect(() => {
     if (!code) return;
     createSession(code);
     // eslint-disable-next-line
   }, [code]);
+  console.log((isActiveSession() && isRemote) || !isRemote);
+  console.log(isActiveSession());
   return (
     <>
       <Routes>
         <Route
           path="/"
           element={
-            ((isActiveSession() && isLocal) || !isLocal) ? (
+            ((isActiveSession() && isRemote) || !isRemote) ? (
               <Index token={getSession().accessToken}/>
             ) : (
               <Navigate to="/login" />
@@ -30,7 +32,7 @@ const App = () => {
         />
         <Route
           path="login"
-          element={((isActiveSession() && isLocal) || !isLocal) ? <Navigate to="/" /> : <LogIn />}
+          element={((isActiveSession() && isRemote) || !isRemote) ? <Navigate to="/" /> : <LogIn />}
         />
       </Routes>
     </>
