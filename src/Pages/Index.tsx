@@ -1,10 +1,16 @@
+import { useEffect, useState } from "react";
 import Playlists from "./components/Playlists";
 import Search from "./components/Search";
 import CurrentlyPlaying from "./components/CurrentlyPlaying";
 import SettingsPage from "./components/SettingsPage";
-import { useEffect, useState } from "react";
 
 import IndexStyled from "./StyledPages/IndexStyled";
+
+export interface playlist {
+  name: string;
+  author: string;
+  image: string;
+}
 
 const track = {
   name: "",
@@ -21,7 +27,8 @@ const Index = ({ token }) => {
   const [, setActive] = useState(false);
   const [current_track, setTrack] = useState(track);
   const [longStyle, setLongStyle] = useState(true);
-  const [playlists, setPlaylists] = useState([]);
+  const [playlists, setPlaylists] = useState<playlist[]>();
+  const [searchInput, setSearchInput] = useState("");
 
   const settingItems = [
     {
@@ -70,46 +77,49 @@ const Index = ({ token }) => {
       });
 
       player.connect();
-    };
-  }, [token]);
 
-  useEffect(() => {
-    const fetchPlaylists = async () => {
-      
-      console.log(token)
-      const response = await fetch(
-        "https://api.spotify.com/v1/me/playlists",
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const fetchPlaylists = async () => {
+        const response = await fetch(
+          "https://api.spotify.com/v1/me/playlists",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          //throw "There has been an issue with the token";
+          return;
         }
-      );
 
-      if(response.ok) {
-        const data = await response.json();
-        const formattedPlaylists = data.items.map((playlist: any) => ({
-          name: playlist.name,
-          author: playlist.owner.display_name,
-          image: playlist.images[0]?.url || ""
-        }))
+        const playlists = await response.json();
+        const formattedPlaylists: playlist[] = playlists.items.map(
+          (playlist: any) => ({
+            name: playlist.name,
+            author: playlist.owner.display_name,
+            image: playlist.images[0]?.url || "",
+          })
+        );
         setPlaylists(formattedPlaylists);
-      } else {
-        console.log("PLAYLISTS ERROR!!!!!!!!!" + response);
-      }
-    };
+      };
 
-    if(token){
       fetchPlaylists();
-    }
+    };
   }, [token]);
 
   return (
     <IndexStyled>
-      <Search />
+      <Search setSearchInput={setSearchInput} searchInput={searchInput} />
       <Playlists
-        playlists={playlists}
+        playlists={
+          searchInput
+            ? playlists?.filter((playlist: playlist) =>
+                playlist.name.includes(searchInput)
+              )
+            : playlists
+        }
         longStyle={longStyle}
       />
       <SettingsPage settingItems={settingItems} />

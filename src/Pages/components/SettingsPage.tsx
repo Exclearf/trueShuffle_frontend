@@ -6,9 +6,8 @@ interface SettingsPageProps {
   settingItems?: {
     name: string;
     handler: (value: boolean) => void;
-}[]
+  }[];
 }
-
 
 const SettingsPage: React.FC<SettingsPageProps> = ({ settingItems }) => {
   const [rotation, setRotation] = useState<number>(0);
@@ -93,7 +92,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settingItems }) => {
       settingItems.forEach((elem, index) => {
         const rotation = index * anglePerText;
         const angle = rotation * (Math.PI / 180);
-        const textRadius = circleRadius - (elem.clientWidth/2 + 10);
+        const textRadius = circleRadius - (elem.clientWidth / 2 + 10);
         const x = textRadius * Math.cos(angle);
         const y = textRadius * Math.sin(angle);
         (elem as HTMLElement).style.left = `${circleRadius + x}px`;
@@ -124,7 +123,15 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settingItems }) => {
     return settingItems?.map((item, index) => (
       <div key={index} className="settingsItem">
         {item.name}
-        <input type="checkbox" onChange={(e) => item.handler(e.target.checked) as unknown as React.ChangeEventHandler<HTMLInputElement>} defaultChecked={true}/>
+        <input
+          type="checkbox"
+          onChange={(e) =>
+            item.handler(
+              e.target.checked
+            ) as unknown as React.ChangeEventHandler<HTMLInputElement>
+          }
+          defaultChecked={true}
+        />
       </div>
     ));
   };

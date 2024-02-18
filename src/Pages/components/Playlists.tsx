@@ -1,14 +1,24 @@
-import { PlaylistsStyledLong, PlaylistsStyledShort } from "./StyledComponents/PlaylistsStyles";
+import {
+  PlaylistsStyledLong,
+  PlaylistsStyledShort,
+} from "./StyledComponents/PlaylistsStyles";
+import { playlist } from "../Index";
+import React from "react";
 
-//@ts-ignore
-export default function Playlists({ playlists, longStyle }) {
+interface playlistsProps {
+  playlists: playlist[] | undefined;
+  longStyle: boolean;
+}
 
-  const StyledComponent = longStyle ? PlaylistsStyledLong : PlaylistsStyledShort;
+const Playlists: React.FC<playlistsProps> = ({ playlists, longStyle }) => {
+  const StyledComponent = longStyle
+    ? PlaylistsStyledLong
+    : PlaylistsStyledShort;
 
   return (
     <>
       <StyledComponent>
-        {playlists.map((playlist: any, index: any) => (
+        {playlists?.map((playlist: any, index: any) => (
           <div key={index} className="playlist">
             <div className="playlist_cover">
               <img src={playlist.image} alt="Playlist cover" />
@@ -22,4 +32,6 @@ export default function Playlists({ playlists, longStyle }) {
       </StyledComponent>
     </>
   );
-}
+};
+
+export default Playlists;
