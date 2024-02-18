@@ -35,6 +35,10 @@ const Index = ({ token }) => {
       name: "Display as rows ",
       handler: setLongStyle,
     },
+    {
+      name: "Display as rows ",
+      handler: setLongStyle,
+    },
   ];
 
   useEffect(() => {
