@@ -9,7 +9,7 @@ const code = new URLSearchParams(window.location.search).get("code");
 
 const App = () => {
   const [getSession, createSession, isActiveSession] = useAuth();
-  const isLocal = new RegExp('^https:\/\/encape\.me.*').test(window.location.href);
+  const isLocal = new RegExp('^https://encape.me.*').test(window.location.href);
   useEffect(() => {
     if (!code) return;
     createSession(code);
@@ -21,7 +21,7 @@ const App = () => {
         <Route
           path="/"
           element={
-            (isActiveSession() && isLocal || !isLocal) ? (
+            ((isActiveSession() && isLocal) || !isLocal) ? (
               <Index token={getSession().accessToken}/>
             ) : (
               <Navigate to="/login" />
@@ -30,7 +30,7 @@ const App = () => {
         />
         <Route
           path="login"
-          element={(isActiveSession() && isLocal || !isLocal) ? <Navigate to="/" /> : <LogIn />}
+          element={((isActiveSession() && isLocal) || !isLocal) ? <Navigate to="/" /> : <LogIn />}
         />
       </Routes>
     </>

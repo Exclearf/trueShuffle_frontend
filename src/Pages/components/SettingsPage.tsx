@@ -66,6 +66,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
   // Touch event handlers
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     rotatingRef.current = true;
+    setIsWheelOpen(true);
     lastY.current = e.touches[0].clientY;
     e.preventDefault();
   };
@@ -81,6 +82,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
 
   const handleTouchEnd = () => {
     rotatingRef.current = false;
+    setIsWheelOpen(false);
     setRotation((currentRotation) => adjustRotation(currentRotation));
   };
 
@@ -114,7 +116,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
     }
   
     return () => {
-      // Clean up listener when the component unmounts or the wheel closes
       document.removeEventListener('touchmove', handleTouchMove as any);
     };
   }, [isWheelOpen]);
