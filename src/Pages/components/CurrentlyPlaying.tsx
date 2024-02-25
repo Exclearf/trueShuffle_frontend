@@ -47,14 +47,16 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
   const [volume, setVolume] = useState<number>(0);
 
   const changeVolume = (val: any) => {
-    player.setVolume(val / 100);
+    player?.setVolume(val / 100);
     setVolume(val / 100);
   };
   const mutePlayer = () => {
     if (volume === 0) {
+      player?.setVolume(prevValue);
       setVolume(prevValue);
     } else {
       prevValue = volume;
+      player?.setVolume(0);
       setVolume(0);
     }
   };
@@ -73,11 +75,11 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
   return (
     <CurrentlyPlayingStyled>
       <div className="songAlbumCover center">
-        <img src={currentTrack.album.images[0].url} alt=""></img>
+        <img src={currentTrack?.album.images[0].url} alt=""></img>
       </div>
       <div className="songInformation">
-        <div className="songName">{currentTrack.name}</div>
-        <div className="songAuthor">{currentTrack.artists[0].name}</div>
+        <div className="songName">{currentTrack?.name}</div>
+        <div className="songAuthor">{currentTrack?.artists[0].name}</div>
       </div>
       <div className="playerControls center">
         <button

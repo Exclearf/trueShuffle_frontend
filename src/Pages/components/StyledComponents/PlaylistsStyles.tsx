@@ -11,6 +11,7 @@ const PlaylistsStyledShort = styled.div`
   overflow-y: auto;
   color-scheme: dark;
   display: flex;
+  flex-wrap: wrap;
   gap: 35px;
   padding: 15px;
 

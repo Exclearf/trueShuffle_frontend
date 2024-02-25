@@ -22,6 +22,10 @@ const track = {
 
 //@ts-ignore
 const Index = ({ token }) => {
+  window.addEventListener("beforeunload", function (e) {
+    player?.disconnect();
+  });
+
   const [player, setPlayer] = useState<any>(undefined);
   const [is_paused, setPaused] = useState(false);
   const [, setActive] = useState(false);
@@ -50,19 +54,18 @@ const Index = ({ token }) => {
 
     window.onSpotifyWebPlaybackSDKReady = () => {
       const player = new window.Spotify.Player({
-        name: "Web Playback SDK",
+        name: "True Shuffle",
         getOAuthToken: (cb) => {
           cb(token);
         },
-        volume: 0.5,
+        volume: 0.5
       });
-
-      setPlayer(player);
 
       player.addListener("ready", ({ device_id }) => {
+        setPlayer(player);
         console.log("Ready with Device ID", device_id);
       });
-
+      
       player.addListener("not_ready", ({ device_id }) => {
         console.log("Device ID has gone offline", device_id);
       });
@@ -94,8 +97,7 @@ const Index = ({ token }) => {
         );
 
         if (!response.ok) {
-          //throw "There has been an issue with the token";
-          return;
+          throw "There has been an issue with the token";
         }
 
         const playlists = await response.json();
