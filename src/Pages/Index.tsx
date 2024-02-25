@@ -1,10 +1,15 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Playlists from "./components/Playlists";
 import Search from "./components/Search";
 import CurrentlyPlaying from "./components/CurrentlyPlaying";
 import SettingsPage from "./components/SettingsPage";
 
 import IndexStyled from "./StyledPages/IndexStyled";
+
+import likedCoverImg from "../Resources/other/likedCover.png";
+import Playlist from "./components/Playlist";
+
+import { TokenContext } from "../Contexts/TokenContext";
 
 export interface playlist {
   name: string;
@@ -21,17 +26,19 @@ const track = {
 };
 
 //@ts-ignore
-const Index = ({ token }) => {
+const Index = () => {
   window.addEventListener("beforeunload", function (e) {
     player?.disconnect();
   });
 
+  const token = useContext(TokenContext);
   const [player, setPlayer] = useState<any>(undefined);
   const [is_paused, setPaused] = useState(false);
   const [, setActive] = useState(false);
   const [current_track, setTrack] = useState(track);
   const [longStyle, setLongStyle] = useState(true);
   const [playlists, setPlaylists] = useState<playlist[]>();
+  const [playlistHref, setPlaylistHref] = useState<string>("");
   const [searchInput, setSearchInput] = useState("");
 
   const settingItems = [
@@ -96,16 +103,11 @@ const Index = ({ token }) => {
       player.connect();
 
       const fetchPlaylists = async () => {
-        type Track = {
-          name: string;
-          author: string;
-          image: string;
-        };
-
         type Playlist = {
           name: string;
           author: string;
           image: string;
+          href: string;
         };
         const response = await fetch(
           "https://api.spotify.com/v1/me/playlists",
@@ -131,33 +133,24 @@ const Index = ({ token }) => {
           return;
         }
 
-        const tracks = await responseTracks.json();
         const playlists = await response.json();
         const formattedPlaylists: Playlist[] = playlists.items.map(
           (playlist: any) => ({
             name: playlist.name,
             author: playlist.owner.display_name,
             image: playlist.images[0]?.url || "",
-            playlistId: playlist.id,
+            href: playlist.href,
           })
         );
 
-        const formattedTracks: Track[] = tracks.items.map((track: any) => ({
-          name: track.track.name,
-          author: track.track.artists[0]?.name,
-          image: track.track.album.images[0]?.url || "",
-        }));
         const likedSongsPlaylist = {
           name: "Liked Songs",
-          author: "Spotify",
-          image: "",
+          author: "You :)",
+          image: `${likedCoverImg}`,
+          href: "https://api.spotify.com/v1/me/tracks",
         };
 
-        const combinedItems = [
-          likedSongsPlaylist,
-          ...formattedPlaylists,
-          ...formattedTracks,
-        ];
+        const combinedItems = [likedSongsPlaylist, ...formattedPlaylists];
 
         setPlaylists(combinedItems);
       };
@@ -169,16 +162,26 @@ const Index = ({ token }) => {
   return (
     <IndexStyled>
       <Search setSearchInput={setSearchInput} searchInput={searchInput} />
-      <Playlists
-        playlists={
-          searchInput
-            ? playlists?.filter((playlist: playlist) =>
-                playlist.name.toLowerCase().includes(searchInput.toLowerCase())
-              )
-            : playlists
-        }
-        longStyle={longStyle}
-      />
+      {playlistHref ? (
+        <Playlist
+          playlistHref={playlistHref}
+          setPlaylistHref={setPlaylistHref}
+        />
+      ) : (
+        <Playlists
+          changePlaylist={setPlaylistHref}
+          playlists={
+            searchInput
+              ? playlists?.filter((playlist: playlist) =>
+                  playlist.name
+                    .toLowerCase()
+                    .includes(searchInput.toLowerCase())
+                )
+              : playlists
+          }
+          longStyle={longStyle}
+        />
+      )}
       <SettingsPage settingItems={settingItems} />
       <CurrentlyPlaying
         currentTrack={current_track}

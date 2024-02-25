@@ -158,6 +158,7 @@ const PlaylistsStyledLong = styled.div`
   color: var(--description-color);
   font-size: 30px;
   font-weight: bold;
+  height: 35px;
 }
 
 .playlist_author {

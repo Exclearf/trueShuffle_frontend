@@ -1,30 +1,37 @@
 import {
   PlaylistsStyledLong,
   PlaylistsStyledShort,
-} from "./StyledComponents/PlaylistsStyles";
+} from "./StyledComponents/PlaylistsStyled";
 import { playlist } from "../Index";
 import React from "react";
 
 interface playlistsProps {
   playlists: playlist[] | undefined;
   longStyle: boolean;
+  changePlaylist: any;
 }
 
-const Playlists: React.FC<playlistsProps> = ({ playlists, longStyle }) => {
+const Playlists: React.FC<playlistsProps> = ({
+  playlists,
+  longStyle,
+  changePlaylist,
+}) => {
   const StyledComponent = longStyle
     ? PlaylistsStyledLong
     : PlaylistsStyledShort;
-
-const navigateToPlaylist = (playlistId: string) => {
-  const url = `/playlist/${playlistId || "liked-tracks"}`;
-  window.location.href = url;
-}
 
   return (
     <>
       <StyledComponent>
         {playlists?.map((playlist: any, index: any) => (
-          <div key={index} className="playlist" onClick={() => navigateToPlaylist(playlist.playlistId || "liked-tracks")}>
+          <div
+            key={index}
+            className="playlist"
+            onClick={() => {
+              console.log(playlist.href);
+              changePlaylist(playlist.href);
+            }}
+          >
             <div className="playlist_cover">
               <img src={playlist.image} alt="Playlist cover" />
             </div>
