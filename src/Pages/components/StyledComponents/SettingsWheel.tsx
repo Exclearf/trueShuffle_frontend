@@ -19,6 +19,7 @@ const SettingsWheel = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1;
   &:hover {
     transition-delay: 0s;
     color: #ebe1e1;

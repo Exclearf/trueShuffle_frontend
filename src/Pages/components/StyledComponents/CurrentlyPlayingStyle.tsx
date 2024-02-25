@@ -6,16 +6,16 @@ const CurrentlyPlayingStyled = styled.div`
   display: grid;
   grid-template: 1fr / 50px 100px 200px 1fr 250px 50px;
   grid-template-areas: ". albumCover albumInfo playerControls playerControlButtons .";
+
   .songAlbumCover {
     grid-area: albumCover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
     img {
       width: 100px;
       height: 100px;
     }
   }
+
   .songInformation {
     display: flex;
     justify-content: center;
@@ -23,49 +23,84 @@ const CurrentlyPlayingStyled = styled.div`
     flex-direction: column;
     grid-area: albumInfo;
   }
+
   .playerControls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     grid-area: playerControls;
   }
 
-  .playerControlButtons{
-    grid-area: playerControlButtons;
-    display: grid;
-    grid-template: 20px 1fr 1fr 20px / 1fr 1fr;
-    grid-template-areas:
-    ". ."
-    "playerDevices playerQueue"
-    "playerVolume playerVolume"
-    ". ."
+  .icon {
+    width: 50px;
+    height: 50px;
+    background-size: contain;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: none;
+    filter: invert(70%) sepia(10%) saturate(10%) hue-rotate(318deg)
+      brightness(84%) contrast(81%);
   }
 
-  .playerVolume{
-    grid-area: playerVolume;
+  .playerControlButtons {
+    grid-area: playerControlButtons;
+    display: grid;
+    grid-template:
+      ". . ." 20px
+      ". playerDevices playerQueue" 1fr
+      "playerVolume playerVolume playerVolume" 1fr
+      ". . ." 20px /
+      1fr 1fr 1fr;
+  }
+
+  .center {
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
-  .playerVolume[type="range"] {
+  .playerDevices {
+    grid-area: playerDevices;
+    width: 100%;
+  }
+
+  .playerQueue {
+    grid-area: playerQueue;
+    width: 100%;
+  }
+
+  .playerVolumeButton {
+    grid-area: playerVolumeButton;
+  }
+
+  .playerVolumeInput {
+    grid-area: playerVolumeInput;
+  }
+
+  .playerVolume {
+    display: grid;
+    grid-area: playerVolume;
+    grid-template: 1fr / 1fr 1fr 1fr;
+    grid-template-areas:
+    "playerVolumeButton playerVolumeInput playerVolumeInput"
+  }
+
+  .playerVolumeInput[type="range"] {
     -webkit-appearance: none;
     appearance: none;
     background: transparent;
     cursor: pointer;
-    width: 15rem;
+    width: 100%;
   }
 
   /***** Track Styles *****/
   /***** Chrome, Safari, Opera, and Edge Chromium *****/
-  .playerVolume[type="range"]::-webkit-slider-runnable-track {
+  .playerVolumeInput[type="range"]::-webkit-slider-runnable-track {
     background: rgba(248, 237, 255, 0.2);
     height: 0.4rem;
     border-radius: 3px;
   }
 
   /******** Firefox ********/
-  .playerVolume[type="range"]::-moz-range-track {
+  .playerVolumeInput[type="range"]::-moz-range-track {
     background: rgba(248, 237, 255, 0.2);
     height: 0.4rem;
     border-radius: 3px;
@@ -73,7 +108,7 @@ const CurrentlyPlayingStyled = styled.div`
 
   /***** Thumb Styles *****/
   /***** Chrome, Safari, Opera, and Edge Chromium *****/
-  .playerVolume[type="range"]::-webkit-slider-thumb {
+  .playerVolumeInput[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none; /* Override default look */
     appearance: none;
     margin-top: -7px; /* Centers thumb on the track */

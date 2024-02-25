@@ -13,10 +13,7 @@ const App = () => {
   useEffect(() => {
     if (!code) return;
     createSession(code);
-    // eslint-disable-next-line
-  }, [code]);
-  console.log((isActiveSession() && isRemote) || !isRemote);
-  console.log(isActiveSession());
+  }, [createSession]);
   return (
     <>
       <Routes>

@@ -10,8 +10,7 @@ const PlaylistsStyledShort = styled.div`
   grid-area: content;
   overflow-y: auto;
   color-scheme: dark;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  display: flex;
   gap: 35px;
   padding: 15px;
 
@@ -41,7 +40,7 @@ const PlaylistsStyledShort = styled.div`
     cursor: pointer;
     transition: background-color ease 0.4s;
     position: relative;
-    min-height: 325px;
+    height: 325px;
 
     &:hover {
       background-color: var(--playlist-hover-bg);
