@@ -16,7 +16,7 @@ const Playlists: React.FC<playlistsProps> = ({ playlists, longStyle }) => {
     : PlaylistsStyledShort;
 
 const navigateToPlaylist = (playlistId: string) => {
-  const url = `/playlist/${playlistId}`;
+  const url = `/playlist/${playlistId || "liked-tracks"}`;
   window.location.href = url;
 }
 
@@ -24,7 +24,7 @@ const navigateToPlaylist = (playlistId: string) => {
     <>
       <StyledComponent>
         {playlists?.map((playlist: any, index: any) => (
-          <div key={index} className="playlist" onClick={() => navigateToPlaylist(playlist.playlistId)}>
+          <div key={index} className="playlist" onClick={() => navigateToPlaylist(playlist.playlistId || "liked-tracks")}>
             <div className="playlist_cover">
               <img src={playlist.image} alt="Playlist cover" />
             </div>

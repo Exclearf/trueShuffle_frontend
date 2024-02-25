@@ -128,7 +128,7 @@ const Index = ({ token }) => {
         );
 
         if (!response.ok || !responseTracks.ok) {
-          throw Error("There has been an issue with creating a player instance.");
+          return;
         }
 
         const tracks = await responseTracks.json();

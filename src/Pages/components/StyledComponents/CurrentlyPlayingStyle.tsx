@@ -4,8 +4,9 @@ const CurrentlyPlayingStyled = styled.div`
   grid-area: current;
   background-color: rgb(36, 36, 36);
   display: grid;
-  grid-template: 1fr / 50px 100px 200px 1fr 250px 50px;
+  grid-template: 1fr / 50px 100px 300px 1fr 250px 50px;
   grid-template-areas: ". albumCover albumInfo playerControls playerControlButtons .";
+  outline: none;
 
   .songAlbumCover {
     grid-area: albumCover;
@@ -17,15 +18,32 @@ const CurrentlyPlayingStyled = styled.div`
   }
 
   .songInformation {
+    margin: 0px 0px 0px 30px;
+    width: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: left;
     flex-direction: column;
     grid-area: albumInfo;
+    color: #ebe1e1;
+    gap: 10px;
+
+    .songName {
+      font-size: 1.5rem;
+    }
+
+    .songAuthor {
+      font-size: 1.1rem;
+    }
   }
 
   .playerControls {
     grid-area: playerControls;
+  }
+
+  .playPauseButton{
+    width: 70px !important;
+    height: 70px !important;
   }
 
   .icon {
@@ -79,8 +97,7 @@ const CurrentlyPlayingStyled = styled.div`
     display: grid;
     grid-area: playerVolume;
     grid-template: 1fr / 1fr 1fr 1fr;
-    grid-template-areas:
-    "playerVolumeButton playerVolumeInput playerVolumeInput"
+    grid-template-areas: "playerVolumeButton playerVolumeInput playerVolumeInput";
   }
 
   .playerVolumeInput[type="range"] {

@@ -44,11 +44,13 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
   player,
   isPaused,
 }) => {
-  const [volume, setVolume] = useState<number>(0);
+  const [volume, setVolume] = useState<number>(0.5);
 
   const changeVolume = (val: any) => {
-    player?.setVolume(val / 100);
-    setVolume(val / 100);
+    if (player) {
+      player.setVolume(val / 100);
+      setVolume(val / 100);
+    }
   };
   const mutePlayer = () => {
     if (volume === 0) {
@@ -69,7 +71,6 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
       })
       .catch(() => {});
 
-    setVolume(0.5);
   }, [player]);
 
   return (
