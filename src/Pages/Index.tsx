@@ -58,16 +58,26 @@ const Index = ({ token }) => {
         getOAuthToken: (cb) => {
           cb(token);
         },
-        volume: 0.5
+        volume: 0.5,
+      });
+      player.addListener("ready", async ({ device_id }) => {
+        console.log("Ready with Device ID", device_id);
+        await fetch("https://api.spotify.com/v1/me/player", {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            device_ids: [device_id],
+            play: false,
+          }),
+        });
+        setPlayer(player);
       });
 
-      player.addListener("ready", ({ device_id }) => {
-        setPlayer(player);
-        console.log("Ready with Device ID", device_id);
-      });
-      
       player.addListener("not_ready", ({ device_id }) => {
         console.log("Device ID has gone offline", device_id);
+        player?.disconnect();
       });
 
       player.addListener("player_state_changed", (state) => {
@@ -86,6 +96,17 @@ const Index = ({ token }) => {
       player.connect();
 
       const fetchPlaylists = async () => {
+        type Track = {
+          name: string;
+          author: string;
+          image: string;
+        };
+
+        type Playlist = {
+          name: string;
+          author: string;
+          image: string;
+        };
         const response = await fetch(
           "https://api.spotify.com/v1/me/playlists",
           {
@@ -96,19 +117,49 @@ const Index = ({ token }) => {
           }
         );
 
-        if (!response.ok) {
-          throw "There has been an issue with the token";
+        const responseTracks = await fetch(
+          "https://api.spotify.com/v1/me/tracks",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok || !responseTracks.ok) {
+          throw Error("There has been an issue with creating a player instance.");
         }
 
+        const tracks = await responseTracks.json();
         const playlists = await response.json();
-        const formattedPlaylists: playlist[] = playlists.items.map(
+        const formattedPlaylists: Playlist[] = playlists.items.map(
           (playlist: any) => ({
             name: playlist.name,
             author: playlist.owner.display_name,
             image: playlist.images[0]?.url || "",
+            playlistId: playlist.id,
           })
         );
-        setPlaylists(formattedPlaylists);
+
+        const formattedTracks: Track[] = tracks.items.map((track: any) => ({
+          name: track.track.name,
+          author: track.track.artists[0]?.name,
+          image: track.track.album.images[0]?.url || "",
+        }));
+        const likedSongsPlaylist = {
+          name: "Liked Songs",
+          author: "Spotify",
+          image: "",
+        };
+
+        const combinedItems = [
+          likedSongsPlaylist,
+          ...formattedPlaylists,
+          ...formattedTracks,
+        ];
+
+        setPlaylists(combinedItems);
       };
 
       fetchPlaylists();
