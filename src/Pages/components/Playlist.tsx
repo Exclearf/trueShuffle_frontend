@@ -106,7 +106,7 @@ const Playlist: React.FC<PlaylistProps> = ({
       }
     };
 
-    fetchPlaylist(0, 1).then((tracks: any) => setTracks(tracks));
+    fetchPlaylist(0, 50).then((tracks: any) => setTracks(tracks));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playlistHref, token]);
   return (
