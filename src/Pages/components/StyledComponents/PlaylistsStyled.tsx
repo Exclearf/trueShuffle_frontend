@@ -50,7 +50,7 @@ const PlaylistsStyledShort = styled.div`
 
   .playlist_cover img {
     width: 100%;
-    border-radius: 6px; 
+    border-radius: 6px;
   }
 
   .description {
@@ -108,63 +108,67 @@ const PlaylistsStyledLong = styled.div`
     border-radius: 15px;
   }
 
-.playlist { 
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  overflow: hidden;
-  padding: 15px;
-  background-color: var(--playlist-bg);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color ease 0.4s;
-  min-height: 150px;
-
-  &:hover {
-    background-color: var(--playlist-hover-bg);
+  &::-webkit-scrollbar-thumb:active {
+    background-color: rgba(248, 237, 255, 0.5);
   }
-}
 
-.playlist_cover {
-  flex: 0 0 auto;
-  width: 150px;
-  height: 150px;
-  margin-right: 15px;
-}
+  .playlist {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+    padding: 15px;
+    background-color: var(--playlist-bg);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color ease 0.4s;
+    min-height: 150px;
 
-.playlist_cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 6px;
-}
+    &:hover {
+      background-color: var(--playlist-hover-bg);
+    }
+  }
 
-.description {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  flex: 1;
-  margin-left: 15px;
-}
+  .playlist_cover {
+    flex: 0 0 auto;
+    width: 150px;
+    height: 150px;
+    margin-right: 15px;
+  }
 
-.playlist_name,
-.playlist_author {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+  .playlist_cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+  }
 
-.playlist_name {
-  color: var(--description-color);
-  font-size: 30px;
-  font-weight: bold;
-  height: 35px;
-}
+  .description {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    margin-left: 15px;
+  }
 
-.playlist_author {
-  color: var(--author-color);
-  font-size: 20px;
-}
+  .playlist_name,
+  .playlist_author {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .playlist_name {
+    color: var(--description-color);
+    font-size: 30px;
+    font-weight: bold;
+    height: 35px;
+  }
+
+  .playlist_author {
+    color: var(--author-color);
+    font-size: 20px;
+  }
 `;
 
-export { PlaylistsStyledLong, PlaylistsStyledShort};
+export { PlaylistsStyledLong, PlaylistsStyledShort };

@@ -78,6 +78,30 @@ const CurrentlyPlayingStyled = styled.div`
   .playerDevices {
     grid-area: playerDevices;
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .devicesDropdown {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 200px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+  }
+
+  .deviceItem {
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .playerDevices:hover .devicesDropdown {
+    display: block;
   }
 
   .playerQueue {

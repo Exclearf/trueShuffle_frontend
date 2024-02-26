@@ -1,5 +1,8 @@
-import { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CurrentlyPlayingStyled from "./StyledComponents/CurrentlyPlayingStyle";
+
+//! Token context import for fetching devices
+import { TokenContext } from "../../Contexts/TokenContext";
 
 //! Icons import
 //* Icons for volume controls of the Spotify player
@@ -37,6 +40,14 @@ interface CurrentlyPlayingProps {
   isPaused: boolean;
 }
 
+export interface device {
+  id: string;
+  name: string;
+  type: string;
+  volume_percent: number;
+  is_active: boolean;
+}
+
 let prevValue: any = 0;
 
 const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
@@ -44,7 +55,16 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
   player,
   isPaused,
 }) => {
+  const token = useContext(TokenContext);
   const [volume, setVolume] = useState<number>(0.5);
+  const [devices, setDevices] = useState<device[]>();
+  const [dropdown, setDropdown] = useState<boolean>(false);
+
+
+  // hande device menu dropdown
+  const toggleDevicesDropdown = () => {
+    setDropdown(!dropdown);
+  };
 
   const changeVolume = (val: any) => {
     if (player) {
@@ -71,7 +91,42 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
       })
       .catch(() => {});
 
-  }, [player]);
+      const fetchDevices = async () => {
+        type Device = {
+          id: string;
+          is_active: boolean;
+          name: string;
+          type: string;
+          volume_percent: number;
+        }
+        const responce = await fetch(
+          "https://api.spotify.com/v1/me/player/devices",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }  
+        );
+
+        if(!responce.ok) {
+          throw new Error('Failed to fetch devices');
+        }
+
+        const devices = await responce.json();
+        const formattedDevices: Device[] = devices.items.map(
+          (device: any) => ({
+            id: device.id,
+            is_active: device.is_active,
+            name: device.name,
+            type: device.type,
+            volume_percent: device.volume_percent,
+            
+          })
+        );
+        setDevices(formattedDevices);
+      };
+  }, [player, token]);
 
   return (
     <CurrentlyPlayingStyled>
@@ -113,13 +168,22 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
         />
       </div>
       <div className="playerControlButtons">
-        <div
+        <button
           className="playerDevices icon"
-          style={{
-            backgroundImage: `url("${devicesIcon}")`,
-          }}
-        />
-        <div
+          style={{backgroundImage: `url("${devicesIcon}")`}}
+          onClick={toggleDevicesDropdown}
+          >
+            {dropdown && (
+              <div className="devicesDropdown">
+                {devices?.map((device) => (
+                <div key={device.id} className="deviceItem">
+                  {device.name}
+                </div>
+              ))}
+              </div>
+            )}
+        </button>
+        <div 
           className="playerQueue icon"
           style={{
             backgroundImage: `url("${queueIcon}")`,

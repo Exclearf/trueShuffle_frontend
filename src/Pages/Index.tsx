@@ -39,7 +39,8 @@ const Index = () => {
   const [longStyle, setLongStyle] = useState(true);
   const [playlists, setPlaylists] = useState<playlist[]>();
   const [playlistHref, setPlaylistHref] = useState<string>("");
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInputPlaylists, setSearchInputPlaylists] = useState("");
+  const [searchInputPlaylist, setSearchInputPlaylist] = useState("");
 
   const settingItems = [
     {
@@ -119,17 +120,7 @@ const Index = () => {
           }
         );
 
-        const responseTracks = await fetch(
-          "https://api.spotify.com/v1/me/tracks",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok || !responseTracks.ok) {
+        if (!response.ok) {
           return;
         }
 
@@ -161,21 +152,26 @@ const Index = () => {
 
   return (
     <IndexStyled>
-      <Search setSearchInput={setSearchInput} searchInput={searchInput} />
+      <Search
+        setSearchInput={playlistHref ? setSearchInputPlaylist : setSearchInputPlaylists}
+        searchInput={playlistHref ? searchInputPlaylist : searchInputPlaylists}
+      />
       {playlistHref ? (
         <Playlist
           playlistHref={playlistHref}
           setPlaylistHref={setPlaylistHref}
+          player={player}
+          searchPrompt={searchInputPlaylist}
         />
       ) : (
         <Playlists
           changePlaylist={setPlaylistHref}
           playlists={
-            searchInput
+            searchInputPlaylists
               ? playlists?.filter((playlist: playlist) =>
                   playlist.name
                     .toLowerCase()
-                    .includes(searchInput.toLowerCase())
+                    .includes(searchInputPlaylists.toLowerCase())
                 )
               : playlists
           }
