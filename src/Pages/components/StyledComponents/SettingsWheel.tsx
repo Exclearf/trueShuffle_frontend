@@ -20,10 +20,10 @@ const SettingsWheel = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2;
+  z-index: 1;
 
   .settingsItem {
-    z-index: 3;
+    z-index: 2;
     color: #ebe1e1;
     transform-origin: center center;
     white-space: nowrap;
@@ -55,6 +55,7 @@ const SettingsWheel = styled.div`
     width: 100vh;
     height: 100vh;
     left: calc(-100vh / 2 + 100px);
+    z-index: 2;
 
     .settingsItem{
       opacity: 1;
