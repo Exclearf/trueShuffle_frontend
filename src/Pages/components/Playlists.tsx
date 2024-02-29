@@ -4,6 +4,7 @@ import {
 } from "./StyledComponents/PlaylistsStyled";
 import { playlist } from "../Index";
 import React from "react";
+import { log } from "../../helpers/log";
 
 interface playlistsProps {
   playlists: playlist[] | undefined;
@@ -28,7 +29,7 @@ const Playlists: React.FC<playlistsProps> = ({
             key={index}
             className="playlist"
             onClick={() => {
-              console.log(playlist.href);
+              log("Clicked on " + playlist.href);
               changePlaylist(playlist.href);
             }}
           >

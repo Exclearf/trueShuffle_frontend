@@ -39,9 +39,9 @@ const renderFeatures = () => {
     return (
       <div className="category">
         <div className="categoryName">{category.name}</div>
-        {category.features.map((feature: any) => {
+        {category.features.map((feature: any, index: number) => {
           return (
-            <div className="feature">
+            <div className="feature" key={index}>
               <div className="name">{feature.name}</div>
               <div className="description">{feature.description}</div>
             </div>

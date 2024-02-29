@@ -1,3 +1,4 @@
+import { log } from "../helpers/log";
 import { useCookies } from "react-cookie";
 
 export const useInfoPage = () => {
@@ -9,6 +10,7 @@ export const useInfoPage = () => {
 
   const closeInfoPage = () => {
     setCookie("isInfoPageClosed", true);
+    log("Info page closed");
   };
 
   return [isInfoPageOpen, closeInfoPage] as const;

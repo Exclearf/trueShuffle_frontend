@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import CurrentlyPlayingStyled from "./StyledComponents/CurrentlyPlayingStyle";
+import { usePlaybackStateChanged } from "../../hooks/usePlaybackStateChanged";
 
 //! Token context import for fetching devices
 import { TokenContext } from "../../Contexts/TokenContext";
@@ -13,16 +14,18 @@ import volumeHighIcon from "../../Resources/volume/volume-high.svg";
 
 //* Icons for queue and devices controls
 import devicesIcon from "../../Resources/other/devices.svg";
+import queueIcon from "../../Resources/other/queue.svg";
+
+//* Icons for devices pop up
 import smartphoneIcon from "../../Resources/other/smartphone.svg";
 import laptopIcon from "../../Resources/other/laptop.svg";
-import queueIcon from "../../Resources/other/queue.svg";
 
 //* Icons for playback controls of the Spotify player
 import playIcon from "../../Resources/controls/play.svg";
 import pauseIcon from "../../Resources/controls/pause.svg";
 import backwardIcon from "../../Resources/controls/backward.svg";
 import forwardIcon from "../../Resources/controls/forward.svg";
-import { usePlaybackStateChanged } from "../../hooks/usePlaybackStateChanged";
+import { log } from "../../helpers/log";
 
 const volumeIcons = [
   volumeOffIcon,
@@ -77,12 +80,14 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
 
   const changeVolume = (val: any) => {
     if (player) {
+      log("Set player volume to " + val);
       player.setVolume(val / 100);
       setVolume(val / 100);
     }
   };
 
   const mutePlayer = () => {
+    log("Mute player");
     if (volume === 0) {
       player?.setVolume(prevValue);
       setVolume(prevValue);
@@ -94,17 +99,8 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
   };
 
   const fetchDevices = async () => {
-    /*
-    type Device = {
-      id: string;
-      is_active: boolean;
-      name: string;
-      type: string;
-      volume_percent: number;
-    };
-    */
-
-    const responce = await fetch(
+    log("Fetching devices");
+    const response = await fetch(
       "https://api.spotify.com/v1/me/player/devices",
       {
         method: "GET",
@@ -114,11 +110,12 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
       }
     );
 
-    if (!responce.ok) {
+    if (!response.ok) {
+      log("Failed to fetch devices");
       return;
     }
 
-    const data = await responce.json();
+    const data = await response.json();
     const formattedDevices: device[] = data.devices?.map((device: any) => ({
       id: device?.id,
       is_active: device.is_active,
@@ -127,9 +124,12 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
       volume_percent: device.volume_percent,
     }));
     setDevices(formattedDevices);
+
+    log("Successfully fetched devices");
   };
 
   const handleChangeDevices = async (deviceId: string) => {
+    log(`Changing the device to ${deviceId}`);
     const response = await fetch("https://api.spotify.com/v1/me/player", {
       method: "PUT",
       headers: {
@@ -141,12 +141,13 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
       }),
     });
     if (!response.ok) {
+      log(`Failed to change the current device to ${deviceId}`);
       return;
-      //throw new Error("Failed to make a request");
     }
   };
 
   const playTrack = async (uri: any) => {
+    log("Playing track from queue " + uri);
     let playlistId = currentlyPlayingPlaylist.split("/").slice(-1);
     if (playlistId[0] === "tracks") {
       await fetch(`https://api.spotify.com/v1/me/player/play`, {
@@ -193,10 +194,8 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
   return (
     <CurrentlyPlayingStyled>
       <div className="songAlbumCover center">
-        {currentTrack?.album.images[0].url ? (
+        {currentTrack?.album.images[0].url && (
           <img src={currentTrack?.album.images[0].url} alt="" />
-        ) : (
-          <></>
         )}
       </div>
       <div className="songInformation">
@@ -251,21 +250,16 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
                     className="Device DeviceButton"
                   >
                     <div className="DeviceBtnLayout">
-                      {device?.type === "Computer" ? (
-                        <div
-                          className="icon background DeviceIcon"
-                          style={{
-                            backgroundImage: `url("${laptopIcon}")`,
-                          }}
-                        ></div>
-                      ) : (
-                        <div
-                          className="icon background DeviceIcon"
-                          style={{
-                            backgroundImage: `url("${smartphoneIcon}")`,
-                          }}
-                        ></div>
-                      )}
+                      <div
+                        className="icon background DeviceIcon"
+                        style={{
+                          backgroundImage: `url("${
+                            device?.type === "Computer"
+                              ? laptopIcon
+                              : smartphoneIcon
+                          }")`,
+                        }}
+                      />
                       <div className="DeviceInfo">
                         <div className="DeviceName">Name: {device?.name}</div>
                         <div className="DeviceStatus">
@@ -307,8 +301,8 @@ const CurrentlyPlaying: React.FC<CurrentlyPlayingProps> = ({
                 </div>
               </div>
               <div className="queue">
-                {currentQueue?.queue?.map((queueItem: any) => (
-                  <div className="queueItem">
+                {currentQueue?.queue?.map((queueItem: any, index: any) => (
+                  <div className="queueItem" key={index}>
                     {
                       <div
                         className="queueItemName"

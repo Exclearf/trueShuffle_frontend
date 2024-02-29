@@ -5,6 +5,7 @@ import { TokenContext } from "../../Contexts/TokenContext";
 import pausePlayIcon from "../../Resources/other/play-pause.svg";
 import durationIcon from "../../Resources/other/duration.svg";
 import backIcon from "../../Resources/other/back.svg";
+import { log } from "../../helpers/log";
 
 interface PlaylistProps {
   playlistHref: string;
@@ -31,15 +32,15 @@ const Playlist: React.FC<PlaylistProps> = ({
   const token = useContext(TokenContext);
   const [tracks, setTracks] = useState<track[]>([]);
 
-
   // TODO: debounce to ~500 ms
-  console.log("Fetching tracks");
+  log("Fetching tracks");
 
   const playTrack = async (
     index: any,
     playFromStart: boolean = false,
     trackId: any
   ) => {
+    log("Trying to play: " + trackId);
     const CurrentTrackId = (
       await (
         await fetch(`https://api.spotify.com/v1/me/player/currently-playing`, {
@@ -104,7 +105,7 @@ const Playlist: React.FC<PlaylistProps> = ({
       const body = await response.json();
       let currentTracksBatch = null;
       if (body?.tracks?.items) {
-        console.log("Finished fetching tracks");
+        log("Finished fetching tracks");
         return body.tracks.items?.map((item: any) => item.track);
       } else {
         currentTracksBatch = body.items?.map((item: any) => {
@@ -118,7 +119,7 @@ const Playlist: React.FC<PlaylistProps> = ({
           return currentItem;
         });
         if (currentTracksBatch?.length === 0) {
-          console.log("Finished fetching tracks");
+          log("Finished fetching tracks");
           return [];
         }
         currentTracks = [

@@ -31,7 +31,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settingItems }) => {
     }, 750);
   };
 
-
   // TODO: Make this work for adjustedAngle > 180 and make it work with the appo when spinning for more, than 360%
   /* eslint-disable @typescript-eslint/no-unused-vars */
   const increaseCurrentSettingsItemFont = () => {
@@ -47,14 +46,14 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settingItems }) => {
     let wheelDegtoItemDeg = 0;
 
     if (adjustedAngle > 0) {
-      wheelDegtoItemDeg = adjustedAngle % 360 < 180 ? (360 - adjustedAngle%360) : (adjustedAngle%360);
-
-      console.log(adjustedAngle%360);
-      console.log(wheelDegtoItemDeg);
+      wheelDegtoItemDeg =
+        adjustedAngle % 360 < 180
+          ? 360 - (adjustedAngle % 360)
+          : adjustedAngle % 360;
     } else {
       wheelDegtoItemDeg =
         -adjustedAngle % 360 < 180
-          ? ((-adjustedAngle % 360) + 360)
+          ? (-adjustedAngle % 360) + 360
           : -adjustedAngle % 360;
     }
 
@@ -200,8 +199,9 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settingItems }) => {
           style={{ transform: `rotate(${rotation}deg)` }}
         >
           {renderTextElements()}
+          <div className="settingsHole"></div>
         </SettingsWheel>
-        <div className="settingsHole"></div>
+       
       </div>
     </SettingsPageStyled>
   );

@@ -13,6 +13,7 @@ import { TokenContext } from "../Contexts/TokenContext";
 import { usePlaybackStateChanged } from "../hooks/usePlaybackStateChanged";
 import InfoPage from "./components/InfoPage";
 import { useInfoPage } from "../hooks/useInfoPage";
+import { log } from "../helpers/log";
 
 export interface playlist {
   name: string;
@@ -76,7 +77,7 @@ const Index = () => {
         volume: 0.5,
       });
       player.addListener("ready", async ({ device_id }) => {
-        console.log("Ready with Device ID", device_id);
+        log("Ready with Device ID" + device_id);
         await fetch("https://api.spotify.com/v1/me/player", {
           method: "PUT",
           headers: {
@@ -91,7 +92,7 @@ const Index = () => {
       });
 
       player.addListener("not_ready", ({ device_id }) => {
-        console.log("Device ID has gone offline", device_id);
+        log("Device ID has gone offline" + device_id);
         player?.disconnect();
       });
 

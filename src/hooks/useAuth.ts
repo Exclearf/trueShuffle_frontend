@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useState } from "react";
+import { log } from "../helpers/log";
 
 export const useAuth = () => {
   const [cookies, setCookie, removeCookie] = useCookies();
@@ -11,8 +12,8 @@ export const useAuth = () => {
    * @returns {string | undefined} Undefined if no accessToken exists
    */
   const getSession = () => {
-    console.log("Access Token:", cookies.accessToken);
-    console.log("Refresh Token:", cookies.refreshToken);
+    log("Access Token:" + cookies.accessToken);
+    log("Refresh Token:" + cookies.refreshToken);
     return {
       accessToken: cookies.accessToken,
       refreshToken: cookies.refreshToken,
