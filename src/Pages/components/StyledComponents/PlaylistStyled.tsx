@@ -26,8 +26,12 @@ const PlaylistStyled = styled.div`
   }
 
   #playlistHeader {
-    background: transparent;
+    background: #121212;
     grid-template-areas: "exitButton title title album dateAdded duration";
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 10px 0px 10px 0px;
 
     .exitButton {
       width: 40px;
