@@ -31,7 +31,7 @@ const PlaylistStyled = styled.div`
     position: sticky;
     top: 0;
     z-index: 1;
-    padding: 10px 0px 10px 0px;
+    padding: 10px 15px 10px 15px;
 
     .exitButton {
       width: 40px;
