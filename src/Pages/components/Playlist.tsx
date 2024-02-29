@@ -162,7 +162,9 @@ const Playlist: React.FC<PlaylistProps> = ({
             : true) && (
             <div
               className="track"
-              onDoubleClick={() => playTrack(index, true, track.id)}
+              onDoubleClick={() => playTrack(index, true, track.id)
+              }
+              key={index}
             >
               <div className="number icon">
                 <div className="pausePlayText">{index+1}</div>
