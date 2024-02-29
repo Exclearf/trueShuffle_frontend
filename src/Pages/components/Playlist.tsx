@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PlaylistStyled from "./StyledComponents/PlaylistStyled";
 import { TokenContext } from "../../Contexts/TokenContext";
 
@@ -11,6 +11,7 @@ interface PlaylistProps {
   setPlaylistHref: any;
   player: any;
   searchPrompt: string;
+  setCurrentlyPlayingPlaylist: any;
 }
 
 type track = {
@@ -20,20 +21,26 @@ type track = {
   };
   artists: [{ name: "" }];
 };
-
 const Playlist: React.FC<PlaylistProps> = ({
   playlistHref,
   setPlaylistHref,
   player,
   searchPrompt,
+  setCurrentlyPlayingPlaylist,
 }) => {
   const token = useContext(TokenContext);
   const [tracks, setTracks] = useState<track[]>([]);
 
+
+  // TODO: debounce to ~500 ms
   console.log("Fetching tracks");
 
-  const playTrack = async (uri: any) => {
-    const isCurrentTrack = (
+  const playTrack = async (
+    index: any,
+    playFromStart: boolean = false,
+    trackId: any
+  ) => {
+    const CurrentTrackId = (
       await (
         await fetch(`https://api.spotify.com/v1/me/player/currently-playing`, {
           method: "GET",
@@ -42,23 +49,42 @@ const Playlist: React.FC<PlaylistProps> = ({
           },
         })
       ).json()
-    ).item.uri;
-    if (isCurrentTrack === uri) {
+    ).item.id;
+    let playlistId = playlistHref.split("/").slice(-1);
+    setCurrentlyPlayingPlaylist(playlistHref);
+    if (CurrentTrackId === trackId && !playFromStart) {
       player?.togglePlay();
     } else {
-      await fetch(`https://api.spotify.com/v1/me/player/play`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          uris: [uri],
-        }),
-      });
+      if (playlistId[0] === "tracks") {
+        // TODO: use our own shuffle to create a queue for playing from saved.
+        await fetch(`https://api.spotify.com/v1/me/player/play`, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            uris: [`spotify:track:${trackId}`],
+          }),
+        });
+      } else {
+        await fetch(`https://api.spotify.com/v1/me/player/play`, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            context_uri: `${"spotify:playlist:" + playlistId}`,
+            offset: {
+              position: index,
+            },
+          }),
+        });
+      }
     }
   };
-  let currentTracks: any = [];
+
   useEffect(() => {
+    let currentTracks: any = [];
     const fetchPlaylist: any = async (
       currentOffset: any,
       defaultLimit: any
@@ -107,13 +133,12 @@ const Playlist: React.FC<PlaylistProps> = ({
     };
 
     fetchPlaylist(0, 50).then((tracks: any) => setTracks(tracks));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playlistHref, token]);
   return (
     <PlaylistStyled>
       <div id="playlistHeader" className="track">
         <button
-          className="exitButton icon"
+          className="exitButton icon iconClickable"
           onClick={() => setPlaylistHref("")}
           style={{
             backgroundImage: `url("${backIcon}")`,
@@ -131,18 +156,23 @@ const Playlist: React.FC<PlaylistProps> = ({
       </div>
       {tracks?.map(
         (track: any, index: number) =>
-          (searchPrompt ? track.name.toLowerCase().includes(searchPrompt.toLowerCase()) : true) && (
-            <div className="track">
+          (searchPrompt
+            ? track.name.toLowerCase().includes(searchPrompt.toLowerCase())
+            : true) && (
+            <div
+              className="track"
+              onDoubleClick={() => playTrack(index, true, track.id)}
+            >
               <div className="number icon">
-                <div className="pausePlayText">{index + 1}</div>
+                <div className="pausePlayText">{index}</div>
                 <div
                   className="pausePlayButton icon"
-                  onClick={() => playTrack(track.uri)}
+                  onClick={() => playTrack(index, false, track.id)}
                   style={{ backgroundImage: `url("${pausePlayIcon}")` }}
                 />
               </div>
               <div className="imageCover">
-                <img src={track.album.images[0].url} />
+                <img src={track.album.images[0].url} alt="" />
               </div>
               <div className="trackInfo">
                 <div className="trackName">{track.name}</div>

@@ -10,6 +10,9 @@ import likedCoverImg from "../Resources/other/likedCover.png";
 import Playlist from "./components/Playlist";
 
 import { TokenContext } from "../Contexts/TokenContext";
+import { usePlaybackStateChanged } from "../hooks/usePlaybackStateChanged";
+import InfoPage from "./components/InfoPage";
+import { useInfoPage } from "../hooks/useInfoPage";
 
 export interface playlist {
   name: string;
@@ -27,20 +30,24 @@ const track = {
 
 //@ts-ignore
 const Index = () => {
-  window.addEventListener("beforeunload", function (e) {
-    player?.disconnect();
-  });
-
   const token = useContext(TokenContext);
   const [player, setPlayer] = useState<any>(undefined);
   const [is_paused, setPaused] = useState(false);
   const [, setActive] = useState(false);
   const [current_track, setTrack] = useState(track);
   const [longStyle, setLongStyle] = useState(true);
+  const [queueHoverable, setQueueHoverable] = useState(true);
   const [playlists, setPlaylists] = useState<playlist[]>();
   const [playlistHref, setPlaylistHref] = useState<string>("");
   const [searchInputPlaylists, setSearchInputPlaylists] = useState("");
   const [searchInputPlaylist, setSearchInputPlaylist] = useState("");
+  const [currentlyPlayingPlaylist, setCurrentlyPlayingPlaylist] = useState<string>("")
+  const [isInfoPageOpen, closeInfoPage] = useInfoPage();
+  const [, , updateMethods] = usePlaybackStateChanged();
+
+  window.addEventListener("beforeunload", function (e) {
+    player?.disconnect();
+  });
 
   const settingItems = [
     {
@@ -48,8 +55,8 @@ const Index = () => {
       handler: setLongStyle,
     },
     {
-      name: "Display as rows ",
-      handler: setLongStyle,
+      name: "Make queue button hoverable ",
+      handler: setQueueHoverable,
     },
   ];
 
@@ -95,13 +102,14 @@ const Index = () => {
 
         setTrack(state.track_window.current_track);
         setPaused(state.paused);
+        updateMethods();
 
         player.getCurrentState().then((state) => {
           !state ? setActive(false) : setActive(true);
         });
       });
 
-      player.connect();
+      player?.connect();
 
       const fetchPlaylists = async () => {
         type Playlist = {
@@ -148,12 +156,16 @@ const Index = () => {
 
       fetchPlaylists();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   return (
     <IndexStyled>
+      {isInfoPageOpen() && <InfoPage closeHandler={closeInfoPage} />}
       <Search
-        setSearchInput={playlistHref ? setSearchInputPlaylist : setSearchInputPlaylists}
+        setSearchInput={
+          playlistHref ? setSearchInputPlaylist : setSearchInputPlaylists
+        }
         searchInput={playlistHref ? searchInputPlaylist : searchInputPlaylists}
       />
       {playlistHref ? (
@@ -162,6 +174,7 @@ const Index = () => {
           setPlaylistHref={setPlaylistHref}
           player={player}
           searchPrompt={searchInputPlaylist}
+          setCurrentlyPlayingPlaylist={setCurrentlyPlayingPlaylist}
         />
       ) : (
         <Playlists
@@ -183,6 +196,8 @@ const Index = () => {
         currentTrack={current_track}
         player={player}
         isPaused={is_paused}
+        isQueuePopUpHoverable={queueHoverable}
+        currentlyPlayingPlaylist={currentlyPlayingPlaylist}
       />
     </IndexStyled>
   );

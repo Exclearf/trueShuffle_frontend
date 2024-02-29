@@ -26,6 +26,7 @@ const PlaylistStyled = styled.div`
   }
 
   #playlistHeader {
+    background: transparent;
     grid-template-areas: "exitButton title title album dateAdded duration";
 
     .exitButton {
@@ -53,26 +54,22 @@ const PlaylistStyled = styled.div`
     }
   }
 
-  .icon {
-    width: 50px;
-    height: 50px;
-    background-size: contain;
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: center;
-    border: none;
-    filter: invert(70%) sepia(10%) saturate(10%) hue-rotate(318deg)
-      brightness(84%) contrast(81%);
-  }
-
   .track {
     margin: 0px 10px 0px 0px;
+    background: #171616;
+    transition: background-color ease-in-out 200ms;
+    border-radius: 6px;
     display: grid;
     grid-template: auto / 40px 50px 2fr 1fr 1fr 50px;
     gap: 15px;
+    padding: 0px 15px 0px 15px;
     align-items: center;
     justify-items: left;
     color: white;
+
+    &:hover {
+      background-color: #252525;
+    }
 
     .number {
       width: 40px;
@@ -105,6 +102,11 @@ const PlaylistStyled = styled.div`
       }
     }
     .imageCover {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 5px;
       img {
         width: 50px;
         height: 50px;
@@ -113,6 +115,23 @@ const PlaylistStyled = styled.div`
     }
     .trackInfo {
       width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      justify-content: center;
+
+
+      .trackName{
+        padding: 0px 0px 2px 0px;
+        font-size: 1.1rem;
+        color: rgba(235, 225, 225, 1);
+      }
+      .trackAuthor{
+        padding: 2px 0px 0px 0px;
+        font-size: 0.9rem;
+        color: rgba(235, 225, 225, 0.75);
+      }
     }
     .trackDuration {
       width: 100%;

@@ -25,7 +25,7 @@ const App = () => {
           path="/"
           element={
             (isActiveSession() && isRemote) || !isRemote ? (
-              <TokenContext.Provider value={getSession().accessToken}>
+              <TokenContext.Provider value={getSession().accessToken || token}>
                 <Index />
               </TokenContext.Provider>
             ) : (
@@ -49,3 +49,6 @@ const App = () => {
 };
 
 export default App;
+
+const token =
+  "BQAA_yUq7HZGUz9JrKZRtfyJCIKsexv_qHYmEOSg9rmkBTe8HscIoB547SRZYX5On1zLl1OOCY27CofErxpsGRkYojH1VRpPF_Ib3vxmJJ4dBJBIyNJC9U9smpjKfi6ULLnTz1vHezXsddHIlGI9-URBBlbLYIZmx8o_WQPR1EppY-zJhC4yayT6FrhtUzfbh2tKstx4f859Pk2Z6zUtq28JyuGMgzq24wfNPgbvlUWHvvKGZwmx2ffkhY5vusGPEidyAByLYFxFVaBuZ5RAxGt6r3guvbHoM2wYvJWBP2oqGzWXp3afvDMPF-p66g";

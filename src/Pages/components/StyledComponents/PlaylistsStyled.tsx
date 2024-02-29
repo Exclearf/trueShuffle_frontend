@@ -121,7 +121,7 @@ const PlaylistsStyledLong = styled.div`
     background-color: var(--playlist-bg);
     border-radius: 6px;
     cursor: pointer;
-    transition: background-color ease 0.4s;
+    transition: background-color ease-in-out 200ms;
     min-height: 150px;
 
     &:hover {

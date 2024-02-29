@@ -33,6 +33,7 @@ const SettingsWheel = styled.div`
     position: absolute;
     transform-origin: center center;
     white-space: nowrap;
+    transition: all 500ms;
   }
 `;
 

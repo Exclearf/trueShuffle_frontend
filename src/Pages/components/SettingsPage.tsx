@@ -31,6 +31,53 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settingItems }) => {
     }, 750);
   };
 
+
+  // TODO: Make this work for adjustedAngle > 180 and make it work with the appo when spinning for more, than 360%
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const increaseCurrentSettingsItemFont = () => {
+    //@ts-ignore
+    let wheelElem = document.getElementsByClassName("settingsWheel");
+    let angle =
+      //@ts-ignore
+      wheelElem[0].style.transform
+        .split("rotate")[1]
+        .replace("(", "")
+        .replace("deg)", "");
+    let adjustedAngle = adjustRotation(parseInt(angle));
+    let wheelDegtoItemDeg = 0;
+
+    if (adjustedAngle > 0) {
+      wheelDegtoItemDeg = adjustedAngle % 360 < 180 ? (360 - adjustedAngle%360) : (adjustedAngle%360);
+
+      console.log(adjustedAngle%360);
+      console.log(wheelDegtoItemDeg);
+    } else {
+      wheelDegtoItemDeg =
+        -adjustedAngle % 360 < 180
+          ? ((-adjustedAngle % 360) + 360)
+          : -adjustedAngle % 360;
+    }
+
+    let settingsItem = document.getElementsByClassName("settingsItem");
+    let horizontalElement = Array.from(settingsItem).filter(
+      (item) =>
+        adjustRotation(
+          parseInt(
+            //@ts-ignore
+            item.style.transform
+              .split("rotate")[1]
+              .replace("(", "")
+              .replace("deg)", "")
+          )
+        ) === wheelDegtoItemDeg
+    );
+
+    if (horizontalElement !== undefined && horizontalElement[0] !== undefined) {
+      //@ts-ignore
+      horizontalElement[0].style.fontSize = "25px";
+    }
+  };
+
   const adjustRotation = (currentRotation: number) => {
     const adjustmentAngle = currentRotation % anglePerText;
     if (adjustmentAngle < anglePerText / 2) {
