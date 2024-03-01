@@ -1,10 +1,25 @@
+import { useContext, useEffect, useState } from "react";
 import Playlists from "./components/Playlists";
 import Search from "./components/Search";
 import CurrentlyPlaying from "./components/CurrentlyPlaying";
 import SettingsPage from "./components/SettingsPage";
-import { useEffect, useState } from "react";
 
 import IndexStyled from "./StyledPages/IndexStyled";
+
+import likedCoverImg from "../Resources/other/likedCover.png";
+import Playlist from "./components/Playlist";
+
+import { TokenContext } from "../Contexts/TokenContext";
+import { usePlaybackStateChanged } from "../hooks/usePlaybackStateChanged";
+import InfoPage from "./components/InfoPage";
+import { useInfoPage } from "../hooks/useInfoPage";
+import { log } from "../helpers/log";
+
+export interface playlist {
+  name: string;
+  author: string;
+  image: string;
+}
 
 const track = {
   name: "",
@@ -15,11 +30,36 @@ const track = {
 };
 
 //@ts-ignore
-const Index = ({ token }) => {
+const Index = () => {
+  const token = useContext(TokenContext);
   const [player, setPlayer] = useState<any>(undefined);
   const [is_paused, setPaused] = useState(false);
   const [, setActive] = useState(false);
   const [current_track, setTrack] = useState(track);
+  const [longStyle, setLongStyle] = useState(true);
+  const [queueHoverable, setQueueHoverable] = useState(true);
+  const [playlists, setPlaylists] = useState<playlist[]>();
+  const [playlistHref, setPlaylistHref] = useState<string>("");
+  const [searchInputPlaylists, setSearchInputPlaylists] = useState("");
+  const [searchInputPlaylist, setSearchInputPlaylist] = useState("");
+  const [currentlyPlayingPlaylist, setCurrentlyPlayingPlaylist] = useState<string>("")
+  const [isInfoPageOpen, closeInfoPage] = useInfoPage();
+  const [, , updateMethods] = usePlaybackStateChanged();
+
+  window.addEventListener("beforeunload", function (e) {
+    player?.disconnect();
+  });
+
+  const settingItems = [
+    {
+      name: "Display as rows ",
+      handler: setLongStyle,
+    },
+    {
+      name: "Make queue button hoverable ",
+      handler: setQueueHoverable,
+    },
+  ];
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -30,21 +70,30 @@ const Index = ({ token }) => {
 
     window.onSpotifyWebPlaybackSDKReady = () => {
       const player = new window.Spotify.Player({
-        name: "Web Playback SDK",
+        name: "True Shuffle",
         getOAuthToken: (cb) => {
           cb(token);
         },
         volume: 0.5,
       });
-
-      setPlayer(player);
-
-      player.addListener("ready", ({ device_id }) => {
-        console.log("Ready with Device ID", device_id);
+      player.addListener("ready", async ({ device_id }) => {
+        log("Ready with Device ID" + device_id);
+        await fetch("https://api.spotify.com/v1/me/player", {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            device_ids: [device_id],
+            play: false,
+          }),
+        });
+        setPlayer(player);
       });
 
       player.addListener("not_ready", ({ device_id }) => {
-        console.log("Device ID has gone offline", device_id);
+        log("Device ID has gone offline" + device_id);
+        player?.disconnect();
       });
 
       player.addListener("player_state_changed", (state) => {
@@ -54,74 +103,105 @@ const Index = ({ token }) => {
 
         setTrack(state.track_window.current_track);
         setPaused(state.paused);
+        updateMethods();
 
         player.getCurrentState().then((state) => {
           !state ? setActive(false) : setActive(true);
         });
       });
 
-      player.connect();
+      player?.connect();
+
+      const fetchPlaylists = async () => {
+        type Playlist = {
+          name: string;
+          author: string;
+          image: string;
+          href: string;
+        };
+        const response = await fetch(
+          "https://api.spotify.com/v1/me/playlists",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          return;
+        }
+
+        const playlists = await response.json();
+        const formattedPlaylists: Playlist[] = playlists.items.map(
+          (playlist: any) => ({
+            name: playlist.name,
+            author: playlist.owner.display_name,
+            image: playlist.images[0]?.url || "",
+            href: playlist.href,
+          })
+        );
+
+        const likedSongsPlaylist = {
+          name: "Liked Songs",
+          author: "You :)",
+          image: `${likedCoverImg}`,
+          href: "https://api.spotify.com/v1/me/tracks",
+        };
+
+        const combinedItems = [likedSongsPlaylist, ...formattedPlaylists];
+
+        setPlaylists(combinedItems);
+      };
+
+      fetchPlaylists();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   return (
     <IndexStyled>
-      <Search />
-      <Playlists playlists={Array(10).fill(playlistsList).flat()} />
-      <SettingsPage texts={textArray} />
-      {current_track.name === "" ? (
-        <CurrentlyPlaying
-          currentTrack={current_track}
+      {isInfoPageOpen() && <InfoPage closeHandler={closeInfoPage} />}
+      <Search
+        setSearchInput={
+          playlistHref ? setSearchInputPlaylist : setSearchInputPlaylists
+        }
+        searchInput={playlistHref ? searchInputPlaylist : searchInputPlaylists}
+      />
+      {playlistHref ? (
+        <Playlist
+          playlistHref={playlistHref}
+          setPlaylistHref={setPlaylistHref}
           player={player}
-          isPaused={is_paused}
+          searchPrompt={searchInputPlaylist}
+          setCurrentlyPlayingPlaylist={setCurrentlyPlayingPlaylist}
         />
       ) : (
-        <></>
+        <Playlists
+          changePlaylist={setPlaylistHref}
+          playlists={
+            searchInputPlaylists
+              ? playlists?.filter((playlist: playlist) =>
+                  playlist.name
+                    .toLowerCase()
+                    .includes(searchInputPlaylists.toLowerCase())
+                )
+              : playlists
+          }
+          longStyle={longStyle}
+        />
       )}
+      <SettingsPage settingItems={settingItems} />
+      <CurrentlyPlaying
+        currentTrack={current_track}
+        player={player}
+        isPaused={is_paused}
+        isQueuePopUpHoverable={queueHoverable}
+        currentlyPlayingPlaylist={currentlyPlayingPlaylist}
+      />
     </IndexStyled>
   );
 };
 
 export default Index;
-const playlistsList = [
-  {
-    name: "O kurwa AM",
-    author: "O kurwa Arctic Monkeys",
-    image:
-      "https://i.pinimg.com/originals/d8/b4/0d/d8b40d4be24986da9cace0c6f2be3cb0.jpg",
-  },
-  {
-    name: "O kurwa The Car",
-    author: " Arctic Monkeys",
-    image:
-      "https://imgb.ifunny.co/images/8048754e5027a976a860c24a1955b508064942822f4cd0ce898f2757e40e0dbd_1.jpg",
-  },
-  {
-    name: "O kurwa The Colour and the Shape",
-    author: "Foo Fighters",
-    image:
-      "https://upload.wikimedia.org/wikipedia/en/0/0d/FooFighters-TheColourAndTheShape.jpg",
-  },
-  {
-    name: "O kurwa In Rainbows",
-    author: "Radiohead",
-    image:
-      "https://media.pitchfork.com/photos/5929b2fe9d034d5c69bf4c59/1:1/w_450%2Cc_limit/7055fb4d.jpg",
-  },
-];
-
-const textArray = [
-  "Lorem ipsum dolor sit amet",
-  "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsum, quam?",
-  "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-  "Lorem ipsum dolor sit.",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
-  "Lorem ipsum dolor sit, amet consectetur",
-];

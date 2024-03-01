@@ -3,20 +3,23 @@ import SettingsWheel from "./StyledComponents/SettingsWheel";
 import SettingsPageStyled from "./StyledComponents/SettingsPageStyled";
 
 interface SettingsPageProps {
-  texts?: string[]; // Assuming texts is an optional prop
+  settingItems?: {
+    name: string;
+    handler: (value: boolean) => void;
+  }[];
 }
 
-const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
+const SettingsPage: React.FC<SettingsPageProps> = ({ settingItems }) => {
   const [rotation, setRotation] = useState<number>(0);
+  const [isWheelOpen, setIsWheelOpen] = useState<boolean>(true);
   const rotatingRef = useRef<boolean>(false);
   const lastY = useRef<number>(0);
   const circleRef = useRef<HTMLDivElement>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const numberOfTexts = texts?.length || 1; // Default to 5 if texts is not provided
+  const numberOfTexts = settingItems?.length || 1;
   const anglePerText = 360 / numberOfTexts;
 
   const handleScroll = (e: React.WheelEvent<HTMLDivElement>) => {
-    e.preventDefault();
     setRotation((prevRotation) => prevRotation + e.deltaY * 0.2);
 
     if (scrollTimeoutRef.current !== null) {
@@ -26,6 +29,52 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
     scrollTimeoutRef.current = setTimeout(() => {
       setRotation((currentRotation) => adjustRotation(currentRotation));
     }, 750);
+  };
+
+  // TODO: Make this work for adjustedAngle > 180 and make it work with the appo when spinning for more, than 360%
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const increaseCurrentSettingsItemFont = () => {
+    //@ts-ignore
+    let wheelElem = document.getElementsByClassName("settingsWheel");
+    let angle =
+      //@ts-ignore
+      wheelElem[0].style.transform
+        .split("rotate")[1]
+        .replace("(", "")
+        .replace("deg)", "");
+    let adjustedAngle = adjustRotation(parseInt(angle));
+    let wheelDegtoItemDeg = 0;
+
+    if (adjustedAngle > 0) {
+      wheelDegtoItemDeg =
+        adjustedAngle % 360 < 180
+          ? 360 - (adjustedAngle % 360)
+          : adjustedAngle % 360;
+    } else {
+      wheelDegtoItemDeg =
+        -adjustedAngle % 360 < 180
+          ? (-adjustedAngle % 360) + 360
+          : -adjustedAngle % 360;
+    }
+
+    let settingsItem = document.getElementsByClassName("settingsItem");
+    let horizontalElement = Array.from(settingsItem).filter(
+      (item) =>
+        adjustRotation(
+          parseInt(
+            //@ts-ignore
+            item.style.transform
+              .split("rotate")[1]
+              .replace("(", "")
+              .replace("deg)", "")
+          )
+        ) === wheelDegtoItemDeg
+    );
+
+    if (horizontalElement !== undefined && horizontalElement[0] !== undefined) {
+      //@ts-ignore
+      horizontalElement[0].style.fontSize = "25px";
+    }
   };
 
   const adjustRotation = (currentRotation: number) => {
@@ -40,7 +89,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     rotatingRef.current = true;
     lastY.current = e.clientY;
-    e.preventDefault();
   };
 
   const handleMouseUp = () => {
@@ -53,7 +101,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
       const deltaY = e.clientY - lastY.current;
       setRotation((prevRotation) => prevRotation - deltaY * 0.5);
       lastY.current = e.clientY;
-      e.preventDefault();
     }
   };
 
@@ -62,23 +109,38 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
     setRotation((currentRotation) => adjustRotation(currentRotation));
   };
 
+  // Touch event handlers
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    rotatingRef.current = true;
+    setIsWheelOpen(true);
+    lastY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!rotatingRef.current) return;
+    const currentY = e.touches[0].clientY;
+    const deltaY = currentY - lastY.current;
+    setRotation((prevRotation) => prevRotation - deltaY * 0.5);
+    lastY.current = currentY;
+  };
+
+  const handleTouchEnd = () => {
+    rotatingRef.current = false;
+    setIsWheelOpen(false);
+    setRotation((currentRotation) => adjustRotation(currentRotation));
+  };
+
   useEffect(() => {
     if (circleRef.current && anglePerText) {
-      const texts = circleRef.current.querySelectorAll(".settingsItem");
+      const settingItems = circleRef.current.querySelectorAll(".settingsItem");
       const circleRadius = window.innerHeight / 2;
 
-      texts.forEach((elem, index) => {
-        const rotation = index * anglePerText + anglePerText / 2;
+      settingItems.forEach((elem, index) => {
+        const rotation = index * anglePerText;
         const angle = rotation * (Math.PI / 180);
-        console.log(
-          circleRadius - elem.getBoundingClientRect().width < 0
-            ? circleRadius - elem.getBoundingClientRect().width
-            : 20
-        );
-        const textRadius = circleRadius - 20;
+        const textRadius = circleRadius - (elem.clientWidth / 2 + 10);
         const x = textRadius * Math.cos(angle);
         const y = textRadius * Math.sin(angle);
-
         (elem as HTMLElement).style.left = `${circleRadius + x}px`;
         (elem as HTMLElement).style.top = `${circleRadius + y}px`;
         (elem as HTMLElement).style.transform = `translate(-50%, -50%) rotate(${
@@ -89,10 +151,33 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (isWheelOpen) {
+      document.addEventListener("touchmove", handleTouchMove as any, {
+        passive: false,
+      });
+    } else {
+      document.removeEventListener("touchmove", handleTouchMove as any);
+    }
+
+    return () => {
+      document.removeEventListener("touchmove", handleTouchMove as any);
+    };
+  }, [isWheelOpen]);
+
   const renderTextElements = () => {
-    return texts?.map((text, index) => (
+    return settingItems?.map((item, index) => (
       <div key={index} className="settingsItem">
-        {text}
+        {item.name}
+        <input
+          type="checkbox"
+          onChange={(e) =>
+            item.handler(
+              e.target.checked
+            ) as unknown as React.ChangeEventHandler<HTMLInputElement>
+          }
+          defaultChecked={true}
+        />
       </div>
     ));
   };
@@ -108,11 +193,15 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ texts }) => {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
           style={{ transform: `rotate(${rotation}deg)` }}
         >
           {renderTextElements()}
+          <div className="settingsHole"></div>
         </SettingsWheel>
-        <div className="settingsHole"></div>
+       
       </div>
     </SettingsPageStyled>
   );

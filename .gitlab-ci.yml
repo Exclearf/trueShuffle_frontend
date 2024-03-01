@@ -14,14 +14,11 @@ Test Repository:
   image: node:21-alpine3.18
   stage: test-repo
   before_script:
-    - npm cache clean --force
     - npm ci
   tags:
     - docker
   script:
     - npm test
-  only:
-    - basic-layout
 
 Build:
   image: node:21-alpine3.18
@@ -29,12 +26,9 @@ Build:
   tags:
     - docker
   before_script:
-    - npm cache clean --force
     - npm ci
   script:
     - npm run build
-  only:
-    - basic-layout
 
 Package:
   image: docker:24.0.9
@@ -51,8 +45,6 @@ Package:
   script:
     - docker build -t $DOCKER_USERNAME/$IMAGE_NAME:$IMAGE_TAG .
     - docker push $DOCKER_USERNAME/$IMAGE_NAME:$IMAGE_TAG
-  only:
-    - basic-layout
 
 Deploy:
   stage: deploy
@@ -60,5 +52,3 @@ Deploy:
     - bash
   script:
     - /scripts/deployFrontend.sh $DOCKER_USERNAME $DOCKER_PASSWORD $IMAGE_NAME $IMAGE_TAG
-  only:
-    - basic-layout
