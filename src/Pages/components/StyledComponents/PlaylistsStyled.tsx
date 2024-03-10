@@ -12,6 +12,7 @@ const PlaylistsStyledShort = styled.div`
   color-scheme: dark;
   display: flex;
   flex-wrap: wrap;
+  align-content: flex-start;
   gap: 35px;
   padding: 15px;
 
@@ -123,6 +124,7 @@ const PlaylistsStyledLong = styled.div`
     cursor: pointer;
     transition: background-color ease-in-out 200ms;
     min-height: 150px;
+    max-height: 200px;
 
     &:hover {
       background-color: var(--playlist-hover-bg);
